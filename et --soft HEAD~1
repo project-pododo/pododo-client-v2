@@ -1,0 +1,33 @@
+[33m6c93c5d[m[33m ([m[1;36mHEAD -> [m[1;32mfeature/cd구축[m[33m, [m[1;31morigin/feature/cd구축[m[33m)[m [feat] cd pipeline 테스트
+[33m5122d12[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m Merge pull request #20 from project-pododo/feature/cd구축
+[33ma91fa01[m CD Test
+[33m2026e95[m Feature/cd구축 (#19)
+[33m8460ec3[m Feature/cd구축 (#18)
+[33m8608955[m Feature/cd구축 (#17)
+[33m79b473f[m Feature/cd구축 (#16)
+[33m518153f[m Feature/cd구축 (#15)
+[33m5c5d2a7[m Feature/cd구축 (#14)
+[33m9903455[m Feature/cd구축 (#13)
+[33m7e350f0[m Feature/cd구축 (#12)
+[33m7c97a48[m Feature/cd구축 (#11)
+[33m4838ecf[m Feature/cd구축 (#10)
+[33m1aa9bc7[m Merge pull request #8 from project-pododo/feature/yj
+[33mdceac6f[m 노트 내용 수정
+[33m98d5773[m 취소선 추가 커밋
+[33mcadbcf6[m 토글 생성 및 완료된 일 추가
+[33mca6123e[m notelist 수정
+[33m60cfaad[m Merge pull request #7 from project-pododo/feature/yj
+[33m9dcb429[m 베이스 컬러 커스텀 추가
+[33mafca595[m 리스트 중간커밋
+[33mfc6d2d8[m 데이트피커 및 CollapseList 추가
+[33m7568b20[m Merge pull request #5 from project-pododo/feature/yj
+[33mfba1fe0[m 휴지통 리스트 삭제 코드 수정
+[33mf6273be[m 휴지통 리스트 추가
+[33m88a461c[m Merge pull request #2 from project-pododo/feature/yj
+[33m9b915a1[m 기본 항목 세팅 추가
+[33mb5a5326[m 아이콘 수정
+[33mae0e74c[m 기본세팅  변경
+[33ma989ca2[m Merge pull request #1 from project-pododo/feature
+[33me00dce5[m 테스트 커밋
+[33mdc877f3[m 기본세팅 커밋
+[33m17725f8[m Initial commit

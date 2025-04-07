@@ -1,0 +1,78 @@
+.ant-collapse-content {
+  background-color: #f4e6f1 !important; /* 기본 배경색 */
+  border-top: none !important;
+}
+
+.ant-collapse-content-active {
+  background-color: #f4e6f1 !important; /* 펼쳐진 상태의 배경색 */
+}
+
+.ant-collapse > .ant-collapse-item > .ant-collapse-header {
+  align-items: center !important ;
+}
+
+.ant-collapse-expand-icon {
+  display: none !important;
+}
+
+.button-hover-effect {
+  color: "red";
+  background-color: #f4e6f1 !important;
+}
+
+.button-hover-effect:hover {
+  background-color: #bfa2db !important;
+  color: #1890ff !important;
+}
+
+.ant-switch02 {
+  min-width: 70px !important;
+}
+.ant-picker {
+  width: 350px !important;
+}
+
+.ant-collapse-item {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Modal */
+.ant-btn-primary {
+  background: #6a0dad !important;
+  border-color: #6a0dad !important;
+}
+.ant-modal {
+  width: 800px !important;
+}
+.ant-modal-content {
+  min-width: 800px;
+}
+
+.ant-modal-footer {
+  padding: 10px 24px !important;
+}
+
+/* Calendar */
+.events {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.events .ant-badge-status {
+  width: 100%;
+  overflow: hidden;
+  font-size: 12px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.notes-month {
+  font-size: 28px;
+  text-align: center;
+}
+.notes-month section {
+  font-size: 28px;
+}
+.ant-picker-calendar-full .ant-picker-panel .ant-picker-calendar-date-today {
+  border-color: #6a0dad !important;
+}
