@@ -1,120 +1,58 @@
-import "./App.css";
-import {
-  Route,
-  Routes,
-  Link,
-  useNavigate,
-  useLocation,
-} from "react-router-dom";
+import React, { useState, useRef } from "react";
 import { Layout, Menu, Avatar, Badge } from "antd";
 import {
   FormOutlined,
   UnorderedListOutlined,
-  DeleteOutlined,
   CheckCircleOutlined,
-  UserOutlined,
+  DeleteOutlined,
   CalendarOutlined,
-  DragOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
-import { useState, useEffect, useRef } from "react";
+import {
+  useNavigate,
+} from "react-router-dom";
 import NoteForm from "./component/NoteForm";
 import NoteList from "./component/NoteList";
 import RubbishList from "./component/RubbishList";
 import CompletedList from "./component/CompletedList";
 import CalendarPage from "./component/CalendarPage";
-import Dnd from "./component/Dnd";
-import dayjs from "dayjs";
-import axios from "axios";
+import FullCalendar from "./component/FullCalendar/page";
 
-const { Content, Sider, Header } = Layout;
+const { Header, Sider, Content } = Layout;
 
-function App() {
-  const [notes, setNotes] = useState([]);
-  const [rubbish, setRubbish] = useState([]);
-  const [selectedKey, setSelectedKey] = useState("1");
-  const [isOverdueCount, setIsOverdueCount] = useState(0);
+const App = () => {
+  const [collapsed, setCollapsed] = useState(true); // 메뉴 기본 축소
+  const [activeMenu, setActiveMenu] = useState("form");
+  // const [notes, setNotes] = useState([]);
+  // const [rubbish, setRubbish] = useState([]);
+  // const [selectedKey, setSelectedKey] = useState("1");
+  // const [isOverdueCount, setIsOverdueCount] = useState(0);
+  const [isOverdueCount] = useState(0);
   const navigate = useNavigate();
-  const location = useLocation();
-  const [collapsed, setCollapsed] = useState(false);
+  // const location = useLocation();
   const avatarRef = useRef(null);
 
-  const handleUpdateNote = (id, updateNote) => {
-    setNotes((prevNotes) =>
-      prevNotes.map((note) => (note.id === id ? updateNote : note))
-    );
-  };
-
-  const handleAddNote = (title, content, dateRange) => {
-    const newNote = { id: Date.now(), title, content, dateRange };
-    setNotes([...notes, newNote]);
-  };
-
-  const handleDelete = (id) => {
-    const deleteNote = notes.find((note) => note.id === id);
-    if (!deleteNote) return;
-
-    const updateNotes = notes.filter((note) => note.id !== id);
-    setNotes([...updateNotes]);
-
-    setRubbish((prevRubbish) => [...prevRubbish, deleteNote]);
-    console.log("updated Note:", updateNotes);
-  };
-
-  const handleRestore = (id) => {
-    const restoreNote = rubbish.find((note) => note.id === id);
-    if (restoreNote) {
-      setNotes([...notes, restoreNote]);
-      setRubbish(rubbish.filter((note) => note.id !== id));
-    }
-  };
-
-  const fetchOverdueCount = async () => {
-    try {
-      const response = await axios.get("/api/v1/todo");
-
-      if (response.data && response.data.code === "10000") {
-        const overdueCount = response.data.data.filter((item) => {
-          const endDate = dayjs(item.endDate);
-          return endDate.isBefore(dayjs()) && item.todoStatus !== "DONE";
-        }).length;
-
-        setIsOverdueCount(overdueCount);
-      } else {
-      }
-    } catch (error) {}
-  };
-
-  useEffect(() => {
-    fetchOverdueCount();
-  }, []);
-
-  useEffect(() => {
-    switch (location.pathname) {
-      case "/":
-        setSelectedKey("1");
-        break;
-      case "/list":
-        setSelectedKey("2");
-        break;
-      case "/completed":
-        setSelectedKey("3");
-        break;
-      case "/rubbish":
-        setSelectedKey("4");
-        break;
-      case "/CalendarPage":
-        setSelectedKey("5");
-        break;
-      case "/Dnd":
-        setSelectedKey("6");
-        break;
+  const renderContent = () => {
+    switch (activeMenu) {
+      case "form":
+        return <NoteForm />;
+      case "list":
+        return <NoteList />;
+      case "done":
+        return <CompletedList />;
+      case "trash":
+        return <RubbishList />;
+      case "calendar":
+        return <CalendarPage />;
+      case "FullCalendar":
+        return <FullCalendar />;
       default:
-        setSelectedKey("1");
+        return <div>메뉴를 선택하세요</div>;
     }
-  }, [location.pathname]);
+  };
 
   return (
-    <Layout style={{ minHeight: "100vh" }}>
+    <Layout style={{ height: "100vh" }}>
       <Header
         style={{
           backgroundColor: "#D1A7E1",
@@ -151,200 +89,92 @@ function App() {
           </Badge>
         </div>
       </Header>
+
       <Layout>
         <Sider
-          width={200}
-          className="site-layout-background"
-          style={{ backgroundColor: "#F4E6F1" }}
           collapsible
           collapsed={collapsed}
           onCollapse={(value) => setCollapsed(value)}
-          breakpoint="lg"
+          width={80}
+          style={{
+            backgroundColor: "#F4E6F1",
+            paddingTop: "20px",
+            textAlign: "center",
+          }}
         >
           <Menu
             mode="inline"
-            selectedKeys={[selectedKey]}
-            onSelect={({ key }) => {
-              setSelectedKey(key);
-              switch (key) {
-                case "1":
-                  navigate("/");
-                  break;
-                case "2":
-                  navigate("/list");
-                  break;
-                case "3":
-                  navigate("/completed");
-                  break;
-                case "4":
-                  navigate("/rubbish");
-                  break;
-                case "5":
-                  navigate("/CalendarPage");
-                  break;
-                case "6":
-                  navigate("/Dnd");
-                  break;
-                default:
-                  navigate("/");
-              }
-            }}
-            inlineCollapsed={collapsed}
-            style={{ height: "100vh", backgroundColor: "#F4E6F1" }}
+            theme="light"
+            selectedKeys={[activeMenu]}
+            onClick={({ key }) => setActiveMenu(key)}
+            style={{ backgroundColor: "#F4E6F1", borderRight: "none" }}
           >
-            <Menu.Item
-              key="1"
-              icon={<FormOutlined />}
-              style={{
-                backgroundColor:
-                  selectedKey === "1" ? "#D1A7E1" : "transparent",
-              }}
-            >
-              <Link
-                to="/"
-                style={{
-                  color: selectedKey === "1" ? "#ffffff" : "#000055",
-                }}
-              >
-                NoteForm
-              </Link>
-            </Menu.Item>
-            <Menu.Item
-              key="2"
-              icon={<UnorderedListOutlined />}
-              style={{
-                backgroundColor:
-                  selectedKey === "2" ? "#D1A7E1" : "transparent",
-              }}
-            >
-              <Link
-                to="/list"
-                style={{
-                  color: selectedKey === "2" ? "#ffffff" : "#000055",
-                }}
-              >
-                NoteList
-              </Link>
-            </Menu.Item>
-            <Menu.Item
-              key="3"
-              icon={<CheckCircleOutlined />}
-              style={{
-                backgroundColor:
-                  selectedKey === "3" ? "#D1A7E1" : "transparent",
-              }}
-            >
-              <Link
-                to="/completed"
-                style={{
-                  color: selectedKey === "3" ? "#ffffff" : "#000055",
-                }}
-              >
-                CompletedList
-              </Link>
-            </Menu.Item>
-            <Menu.Item
-              key="4"
-              icon={<DeleteOutlined />}
-              style={{
-                color: "red",
-                backgroundColor:
-                  selectedKey === "4" ? "#D1A7E1" : "transparent",
-              }}
-            >
-              <Link
-                to="/rubbish"
-                style={{
-                  color: selectedKey === "4" ? "#ffffff" : "#000055",
-                }}
-              >
-                휴지통
-              </Link>
-            </Menu.Item>
-            <Menu.Item
-              key="5"
-              icon={<CalendarOutlined />}
-              style={{
-                backgroundColor:
-                  selectedKey === "5" ? "#D1A7E1" : "transparent",
-              }}
-            >
-              <Link
-                to="/CalendarPage"
-                style={{
-                  color: selectedKey === "5" ? "#ffffff" : "#000055",
-                }}
-              >
-                Calendar
-              </Link>
-            </Menu.Item>
-            <Menu.Item
-              key="6"
-              icon={<DragOutlined />}
-              style={{
-                backgroundColor:
-                  selectedKey === "6" ? "#D1A7E1" : "transparent",
-              }}
-            >
-              <Link
-                to="/Dnd"
-                style={{
-                  color: selectedKey === "6" ? "#ffffff" : "#000055",
-                }}
-              >
-                Dnd
-              </Link>
-            </Menu.Item>
+            <Menu.Item key="form" icon={<FormOutlined />} />
+            <Menu.Item key="list" icon={<UnorderedListOutlined />} />
+            <Menu.Item key="done" icon={<CheckCircleOutlined />} />
+            <Menu.Item key="trash" icon={<DeleteOutlined />} />
+            <Menu.Item key="calendar" icon={<CalendarOutlined />} />
+            <Menu.Item key="user" icon={<UserOutlined />} />
+            <Menu.Item key="FullCalendar" icon={<CalendarOutlined />} />
           </Menu>
         </Sider>
 
-        <Layout>
-          <Content
+        <Layout
+          style={{
+            display: "flex",
+            flex: 1,
+            height: "100vh",
+            flexDirection: "row",
+          }}
+        >
+          <Layout
             style={{
-              padding: 24,
-              margin: 0,
-              minHeight: 380,
-              height: "100%",
-              backgroundColor: "#FFF5FB",
+              width: "20%",
+              backgroundColor: "#fff5fb",
+              borderRight: "1px solid #ddd",
             }}
           >
-            <Routes>
-              <Route path="/" element={<NoteForm onAdd={handleAddNote} />} />
-              <Route
-                path="/list"
-                element={
-                  <NoteList
-                    notes={notes}
-                    onDelete={handleDelete}
-                    onUpdate={handleUpdateNote}
-                    // onOverdueChange={handleOverdueChange}
-                  />
-                }
-              />
-              <Route
-                path="/completed"
-                element={
-                  <CompletedList
-                    notes={notes}
-                    onDelete={handleDelete}
-                    // onOverdueChange={handleOverdueChange}
-                  />
-                }
-              />
-              <Route
-                path="/rubbish"
-                element={
-                  <RubbishList rubbish={rubbish} onRestore={handleRestore} />
-                }
-              />
-              <Route path="/CalendarPage" element={<CalendarPage />} />
-              <Route path="/Dnd" element={<Dnd />} />
-            </Routes>
-          </Content>
+            <Content style={{ padding: "16px" }}>
+              <div style={{ height: "100%", backgroundColor: "#fefefe" }}></div>
+            </Content>
+          </Layout>
+
+          <Layout style={{ width: "60%" }}>
+            <Content style={{ padding: "16px" }}>
+              <div
+                style={{
+                  height: "100%",
+                  backgroundColor: "#ffffff",
+                  borderRadius: "8px",
+                  padding: "16px",
+                }}
+              >
+                {renderContent()}
+              </div>
+            </Content>
+          </Layout>
+
+          <Layout
+            style={{
+              width: "20%",
+              backgroundColor: "#f4f4f4",
+              borderLeft: "1px solid #ddd",
+            }}
+          >
+            <Content style={{ padding: "16px" }}>
+              <div
+                style={{
+                  height: "100%",
+                  backgroundColor: "#ffffff",
+                  borderRadius: "8px",
+                }}
+              ></div>
+            </Content>
+          </Layout>
         </Layout>
       </Layout>
     </Layout>
   );
-}
+};
 
 export default App;
