@@ -1,4 +1,11 @@
-import React, { useState, useRef } from "react";
+import "./App.css";
+import {
+  Route,
+  Routes,
+  Link,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 import { Layout, Menu, Avatar, Badge } from "antd";
 import {
   FormOutlined,
@@ -7,49 +14,105 @@ import {
   DeleteOutlined,
   CalendarOutlined,
   UserOutlined,
+  VerticalLeftOutlined,
+  VerticalRightOutlined,
 } from "@ant-design/icons";
-import {
-  useNavigate,
-} from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
 import NoteForm from "./component/NoteForm";
 import NoteList from "./component/NoteList";
 import RubbishList from "./component/RubbishList";
 import CompletedList from "./component/CompletedList";
 import CalendarPage from "./component/CalendarPage";
 import FullCalendar from "./component/FullCalendar/page";
+import dayjs from "dayjs";
+import axios from "axios";
 
 const { Header, Sider, Content } = Layout;
 
 const App = () => {
-  const [collapsed, setCollapsed] = useState(true); // 메뉴 기본 축소
-  const [activeMenu, setActiveMenu] = useState("form");
-  // const [notes, setNotes] = useState([]);
-  // const [rubbish, setRubbish] = useState([]);
-  // const [selectedKey, setSelectedKey] = useState("1");
-  // const [isOverdueCount, setIsOverdueCount] = useState(0);
-  const [isOverdueCount] = useState(0);
+  const [notes, setNotes] = useState([]);
+  const [rubbish, setRubbish] = useState([]);
+  const [selectedKey, setSelectedKey] = useState("1");
+  const [isOverdueCount, setIsOverdueCount] = useState(0);
   const navigate = useNavigate();
-  // const location = useLocation();
+  const location = useLocation();
   const avatarRef = useRef(null);
+  const [isSideVisible, setIsSideVisible] = useState(false);
 
-  const renderContent = () => {
-    switch (activeMenu) {
-      case "form":
-        return <NoteForm />;
-      case "list":
-        return <NoteList />;
-      case "done":
-        return <CompletedList />;
-      case "trash":
-        return <RubbishList />;
-      case "calendar":
-        return <CalendarPage />;
-      case "FullCalendar":
-        return <FullCalendar />;
-      default:
-        return <div>메뉴를 선택하세요</div>;
+  const handleUpdateNote = (id, updateNote) => {
+    setNotes((prevNotes) =>
+      prevNotes.map((note) => (note.id === id ? updateNote : note))
+    );
+  };
+
+  const handleAddNote = (title, content, dateRange) => {
+    const newNote = { id: Date.now(), title, content, dateRange };
+    setNotes([...notes, newNote]);
+  };
+
+  const handleDelete = (id) => {
+    const deleteNote = notes.find((note) => note.id === id);
+    if (!deleteNote) return;
+
+    const updateNotes = notes.filter((note) => note.id !== id);
+    setNotes([...updateNotes]);
+
+    setRubbish((prevRubbish) => [...prevRubbish, deleteNote]);
+    console.log("updated Note:", updateNotes);
+  };
+
+  const handleRestore = (id) => {
+    const restoreNote = rubbish.find((note) => note.id === id);
+    if (restoreNote) {
+      setNotes([...notes, restoreNote]);
+      setRubbish(rubbish.filter((note) => note.id !== id));
     }
   };
+
+  const fetchOverdueCount = async () => {
+    try {
+      const response = await axios.get("/api/v1/todo");
+
+      if (response.data && response.data.code === "10000") {
+        const overdueCount = response.data.data.filter((item) => {
+          const endDate = dayjs(item.endDate);
+          return endDate.isBefore(dayjs()) && item.todoStatus !== "DONE";
+        }).length;
+
+        setIsOverdueCount(overdueCount);
+      } else {
+      }
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    fetchOverdueCount();
+  }, []);
+
+  useEffect(() => {
+    switch (location.pathname) {
+      case "/FullCalendar":
+        setSelectedKey("1");
+        break;
+      case "/list":
+        setSelectedKey("2");
+        break;
+      case "/completed":
+        setSelectedKey("3");
+        break;
+      case "/rubbish":
+        setSelectedKey("4");
+        break;
+      case "/CalendarPage":
+        setSelectedKey("5");
+        break;
+      case "/":
+        setSelectedKey("6");
+        break;
+      default:
+        setSelectedKey("1");
+    }
+  }, [location.pathname]);
 
   return (
     <Layout style={{ height: "100vh" }}>
@@ -63,7 +126,10 @@ const App = () => {
           cursor: "pointer",
         }}
       >
-        <h1 style={{ color: "white", margin: 0 }} onClick={() => navigate("/")}>
+        <h1
+          style={{ color: "white", margin: 0 }}
+          onClick={() => navigate("/FullCalendar")}
+        >
           PODODO
           <img
             src="/images/icon-grapes.png"
@@ -92,30 +158,103 @@ const App = () => {
 
       <Layout>
         <Sider
-          collapsible
-          collapsed={collapsed}
-          onCollapse={(value) => setCollapsed(value)}
+          collapsed={true}
+          collapsedWidth={80}
           width={80}
-          style={{
-            backgroundColor: "#F4E6F1",
-            paddingTop: "20px",
-            textAlign: "center",
-          }}
+          className="site-layout-background"
         >
           <Menu
             mode="inline"
-            theme="light"
-            selectedKeys={[activeMenu]}
-            onClick={({ key }) => setActiveMenu(key)}
-            style={{ backgroundColor: "#F4E6F1", borderRight: "none" }}
+            selectedKeys={[selectedKey]}
+            inlineCollapsed={true}
+            style={{ height: "100vh", backgroundColor: "#F4E6F1" }}
+            onSelect={({ key }) => {
+              setSelectedKey(key);
+              switch (key) {
+                case "1":
+                  navigate("/FullCalendar");
+                  break;
+                case "2":
+                  navigate("/list");
+                  break;
+                case "3":
+                  navigate("/completed");
+                  break;
+                case "4":
+                  navigate("/rubbish");
+                  break;
+                case "5":
+                  navigate("/CalendarPage");
+                  break;
+                case "6":
+                  navigate("/");
+                  break;
+                default:
+                  navigate("/");
+              }
+            }}
           >
-            <Menu.Item key="form" icon={<FormOutlined />} />
-            <Menu.Item key="list" icon={<UnorderedListOutlined />} />
-            <Menu.Item key="done" icon={<CheckCircleOutlined />} />
-            <Menu.Item key="trash" icon={<DeleteOutlined />} />
-            <Menu.Item key="calendar" icon={<CalendarOutlined />} />
-            <Menu.Item key="user" icon={<UserOutlined />} />
-            <Menu.Item key="FullCalendar" icon={<CalendarOutlined />} />
+            <Menu.Item
+              key="1"
+              icon={<CalendarOutlined />}
+              style={{
+                backgroundColor:
+                  selectedKey === "1" ? "#D1A7E1" : "transparent",
+              }}
+            >
+              <Link to="/FullCalendar">FullCalendar</Link>
+            </Menu.Item>
+            <Menu.Item
+              key="2"
+              icon={<UnorderedListOutlined />}
+              style={{
+                backgroundColor:
+                  selectedKey === "2" ? "#D1A7E1" : "transparent",
+              }}
+            >
+              <Link to="/list">NoteList</Link>
+            </Menu.Item>
+            <Menu.Item
+              key="3"
+              icon={<CheckCircleOutlined />}
+              style={{
+                backgroundColor:
+                  selectedKey === "3" ? "#D1A7E1" : "transparent",
+              }}
+            >
+              <Link to="/completed">CompletedList</Link>
+            </Menu.Item>
+            <Menu.Item
+              key="4"
+              icon={<DeleteOutlined />}
+              style={{
+                color: "red",
+                backgroundColor:
+                  selectedKey === "4" ? "#D1A7E1" : "transparent",
+              }}
+            >
+              <Link to="/rubbish">휴지통</Link>
+            </Menu.Item>
+            <Menu.Item
+              key="5"
+              icon={<CalendarOutlined />}
+              style={{
+                backgroundColor:
+                  selectedKey === "5" ? "#D1A7E1" : "transparent",
+              }}
+            >
+              <Link to="/CalendarPage">Calendar</Link>
+            </Menu.Item>
+            <Menu.Item
+              key="6"
+              icon={<FormOutlined />}
+              style={{
+                backgroundColor:
+                  selectedKey === "6" ? "#D1A7E1" : "transparent",
+              }}
+            >
+              <Link to="/">NoteForm</Link>
+            </Menu.Item>
           </Menu>
         </Sider>
 
@@ -139,7 +278,14 @@ const App = () => {
             </Content>
           </Layout>
 
-          <Layout style={{ width: "60%" }}>
+          <Layout
+            style={{
+              width: isSideVisible ? "60%" : "80%",
+              transition: "width 0.3s",
+              backgroundColor: "#fff5fb",
+              position: "relative",
+            }}
+          >
             <Content style={{ padding: "16px" }}>
               <div
                 style={{
@@ -149,19 +295,84 @@ const App = () => {
                   padding: "16px",
                 }}
               >
-                {renderContent()}
+                <Routes>
+                  <Route path="/FullCalendar" element={<FullCalendar />} />
+                  <Route
+                    path="/list"
+                    element={
+                      <NoteList
+                        notes={notes}
+                        onDelete={handleDelete}
+                        onUpdate={handleUpdateNote}
+                      />
+                    }
+                  />
+                  <Route
+                    path="/completed"
+                    element={
+                      <CompletedList notes={notes} onDelete={handleDelete} />
+                    }
+                  />
+                  <Route
+                    path="/rubbish"
+                    element={
+                      <RubbishList
+                        rubbish={rubbish}
+                        onRestore={handleRestore}
+                      />
+                    }
+                  />
+                  <Route path="/CalendarPage" element={<CalendarPage />} />
+                  <Route
+                    path="/"
+                    element={<NoteForm onAdd={handleAddNote} />}
+                  />
+                </Routes>
               </div>
             </Content>
+            <div
+              style={{
+                position: "absolute",
+                top: "50%",
+                right: isSideVisible ? "-10px" : "-10px",
+                transform: "translateY(-50%)",
+                backgroundColor: "#D1A7E1",
+                color: "white",
+                padding: "4px 6px",
+                borderRadius: isSideVisible ? "6px 0 0 6px" : "6px 0 0 6px",
+                cursor: "pointer",
+                boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+                fontSize: "20px",
+                zIndex: 1000,
+              }}
+              onClick={() => {
+                setIsSideVisible((prev) => {
+                  const next = !prev;
+                  setTimeout(() => {
+                    window.dispatchEvent(new Event("resize"));
+                  }, 300);
+                  return next;
+                });
+              }}
+            >
+              {isSideVisible ? (
+                <VerticalLeftOutlined />
+              ) : (
+                <VerticalRightOutlined />
+              )}
+            </div>
           </Layout>
 
           <Layout
             style={{
-              width: "20%",
-              backgroundColor: "#f4f4f4",
-              borderLeft: "1px solid #ddd",
+              width: isSideVisible ? "20%" : "0",
+              transition: "width 0.3s",
+              backgroundColor: "#fff5fb",
+              borderLeft: isSideVisible ? "1px solid #ddd" : "none",
+              overflow: "hidden",
             }}
           >
-            <Content style={{ padding: "16px" }}>
+            <Content style={{ padding: "16px", position: "relative" }}>
               <div
                 style={{
                   height: "100%",
