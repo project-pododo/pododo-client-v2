@@ -91,7 +91,7 @@ const App = () => {
 
   useEffect(() => {
     switch (location.pathname) {
-      case "/FullCalendar":
+      case "/":
         setSelectedKey("1");
         break;
       case "/list":
@@ -106,7 +106,7 @@ const App = () => {
       case "/CalendarPage":
         setSelectedKey("5");
         break;
-      case "/":
+      case "/NoteForm":
         setSelectedKey("6");
         break;
       default:
@@ -128,7 +128,7 @@ const App = () => {
       >
         <h1
           style={{ color: "white", margin: 0 }}
-          onClick={() => navigate("/FullCalendar")}
+          onClick={() => navigate("/")}
         >
           PODODO
           <img
@@ -172,7 +172,7 @@ const App = () => {
               setSelectedKey(key);
               switch (key) {
                 case "1":
-                  navigate("/FullCalendar");
+                  navigate("/");
                   break;
                 case "2":
                   navigate("/list");
@@ -187,7 +187,7 @@ const App = () => {
                   navigate("/CalendarPage");
                   break;
                 case "6":
-                  navigate("/");
+                  navigate("/NoteForm");
                   break;
                 default:
                   navigate("/");
@@ -202,7 +202,7 @@ const App = () => {
                   selectedKey === "1" ? "#D1A7E1" : "transparent",
               }}
             >
-              <Link to="/FullCalendar">FullCalendar</Link>
+              <Link to="/">FullCalendar</Link>
             </Menu.Item>
             <Menu.Item
               key="2"
@@ -253,7 +253,7 @@ const App = () => {
                   selectedKey === "6" ? "#D1A7E1" : "transparent",
               }}
             >
-              <Link to="/">NoteForm</Link>
+              <Link to="/NoteForm">NoteForm</Link>
             </Menu.Item>
           </Menu>
         </Sider>
@@ -296,7 +296,7 @@ const App = () => {
                 }}
               >
                 <Routes>
-                  <Route path="/FullCalendar" element={<FullCalendar />} />
+                  <Route path="/" element={<FullCalendar />} />
                   <Route
                     path="/list"
                     element={
@@ -324,7 +324,7 @@ const App = () => {
                   />
                   <Route path="/CalendarPage" element={<CalendarPage />} />
                   <Route
-                    path="/"
+                    path="/NoteForm"
                     element={<NoteForm onAdd={handleAddNote} />}
                   />
                 </Routes>
