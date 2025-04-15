@@ -76,3 +76,10 @@
 .ant-picker-calendar-full .ant-picker-panel .ant-picker-calendar-date-today {
   border-color: #6a0dad !important;
 }
+
+
+.ant-tooltip-inner {
+  color: #fff !important; /* 밝은 폰트 색상 */
+  background-color: #6a1b9a !important; /* 포도색 배경 예시 */
+  font-weight: 500;
+}

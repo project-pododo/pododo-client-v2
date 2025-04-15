@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-// import "../../css/pulse-theme.css";
+import "../../css/pulse-theme.css";
 import listPlugin from "@fullcalendar/list";
 
 const CalendarPage = () => {
@@ -34,25 +34,42 @@ const CalendarPage = () => {
     }
   };
 
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsReady(true);
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div style={{ width: "100%", height: "100%", padding: "0" }}>
-      <FullCalendar
-        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
-        initialView="dayGridMonth"
-        editable={true}
-        selectable={true}
-        events={events}
-        dateClick={handleDateClick}
-        eventClick={handleEventClick}
-        height="100%"
-        dayMaxEventRows={true}
-        headerToolbar={{
-          left: "prev,next today",
-          center: "title",
-          right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek",
-          // listWeek, listMonth, listDay 형식으로 세팅 가능
-        }}
-      />
+      {isReady && (
+        <FullCalendar
+          plugins={[
+            dayGridPlugin,
+            timeGridPlugin,
+            interactionPlugin,
+            listPlugin,
+          ]}
+          initialView="dayGridMonth"
+          editable={true}
+          selectable={true}
+          events={events}
+          dateClick={handleDateClick}
+          eventClick={handleEventClick}
+          height="100%"
+          dayMaxEventRows={true}
+          headerToolbar={{
+            left: "prev,next today",
+            center: "title",
+            right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek",
+            // listWeek, listMonth, listDay 형식으로 세팅 가능
+          }}
+        />
+      )}
     </div>
   );
 };
