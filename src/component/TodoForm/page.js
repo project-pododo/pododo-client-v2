@@ -44,8 +44,8 @@ const FormPage = ({ onSubmit, onDelete }) => {
       </div>
 
       <Form layout="vertical" form={form} onFinish={handleFinish}>
-        <Form.Item name="title" label="제목" rules={[{ required: true }]}>
-          <Input placeholder="제목을 입력하세요" />
+        <Form.Item name="title" label="제목1" rules={[{ required: true }]}>
+          <Input placeholder="제목을 입력하세요1" />
         </Form.Item>
 
         <Form.Item>

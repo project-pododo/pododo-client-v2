@@ -3,7 +3,7 @@ name: pododo client deploy
 on:
   push:
     branches:
-      - main
+      - dev
 
 jobs:
   build-and-deploy:
@@ -36,4 +36,4 @@ jobs:
 
       - name: Deploy to GCS
         run: |
-          gsutil -m rsync -R ./build gs://${{ secrets.SERVER_USER }}/
+          gsutil -m rsync -R ./build gs://${{ secrets.BUCKET_NAME }}/
