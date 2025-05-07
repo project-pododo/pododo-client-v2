@@ -24,6 +24,7 @@ import RubbishList from "./component/RubbishList";
 import CompletedList from "./component/CompletedList";
 import CalendarPage from "./component/CalendarPage";
 import FullCalendar from "./component/FullCalendar/page";
+import TodoForm from "./component/TodoForm/page";
 import dayjs from "dayjs";
 import axios from "axios";
 
@@ -379,7 +380,9 @@ const App = () => {
                   backgroundColor: "#ffffff",
                   borderRadius: "8px",
                 }}
-              ></div>
+              >
+                <TodoForm onSubmit={handleAddNote} />
+              </div>
             </Content>
           </Layout>
         </Layout>
