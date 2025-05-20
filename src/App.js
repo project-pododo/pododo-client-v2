@@ -6,18 +6,17 @@ import {
   useNavigate,
   useLocation,
 } from "react-router-dom";
-import { Layout, Menu, Avatar, Badge } from "antd";
+import { Layout, Menu } from "antd";
 import {
   FormOutlined,
   UnorderedListOutlined,
   CheckCircleOutlined,
   DeleteOutlined,
   CalendarOutlined,
-  UserOutlined,
   VerticalLeftOutlined,
   VerticalRightOutlined,
 } from "@ant-design/icons";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import NoteForm from "./component/NoteForm";
 import NoteList from "./component/NoteList";
 import RubbishList from "./component/RubbishList";
@@ -25,19 +24,15 @@ import CompletedList from "./component/CompletedList";
 import CalendarPage from "./component/CalendarPage";
 import FullCalendar from "./component/FullCalendar/page";
 import TodoForm from "./component/TodoForm/page";
-import dayjs from "dayjs";
-import axios from "axios";
 
-const { Header, Sider, Content } = Layout;
+const { Sider, Content } = Layout;
 
 const App = () => {
   const [notes, setNotes] = useState([]);
   const [rubbish, setRubbish] = useState([]);
   const [selectedKey, setSelectedKey] = useState("1");
-  const [isOverdueCount, setIsOverdueCount] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
-  const avatarRef = useRef(null);
   const [isSideVisible, setIsSideVisible] = useState(false);
 
   const handleUpdateNote = (id, updateNote) => {
@@ -70,26 +65,6 @@ const App = () => {
     }
   };
 
-  const fetchOverdueCount = async () => {
-    try {
-      const response = await axios.get("/api/v1/todo");
-
-      if (response.data && response.data.code === "10000") {
-        const overdueCount = response.data.data.filter((item) => {
-          const endDate = dayjs(item.endDate);
-          return endDate.isBefore(dayjs()) && item.todoStatus !== "DONE";
-        }).length;
-
-        setIsOverdueCount(overdueCount);
-      } else {
-      }
-    } catch (error) {}
-  };
-
-  useEffect(() => {
-    fetchOverdueCount();
-  }, []);
-
   useEffect(() => {
     switch (location.pathname) {
       case "/":
@@ -117,7 +92,7 @@ const App = () => {
 
   return (
     <Layout style={{ height: "100vh" }}>
-      <Header
+      {/* <Header
         style={{
           backgroundColor: "#D1A7E1",
           display: "flex",
@@ -127,10 +102,7 @@ const App = () => {
           cursor: "pointer",
         }}
       >
-        <h1
-          style={{ color: "white", margin: 0 }}
-          onClick={() => navigate("/")}
-        >
+        <h1 style={{ color: "white", margin: 0 }} onClick={() => navigate("/")}>
           PODODO
           <img
             src="/images/icon-grapes.png"
@@ -155,7 +127,7 @@ const App = () => {
             />{" "}
           </Badge>
         </div>
-      </Header>
+      </Header> */}
 
       <Layout>
         <Sider
@@ -172,6 +144,9 @@ const App = () => {
             onSelect={({ key }) => {
               setSelectedKey(key);
               switch (key) {
+                case "0":
+                  navigate("/pododo");
+                  break;
                 case "1":
                   navigate("/");
                   break;
@@ -195,6 +170,18 @@ const App = () => {
               }
             }}
           >
+            <Menu.Item
+              key="0"
+              style={{
+                padding: 0,
+                fontWeight: "bold",
+                textAlign: "center",
+                backgroundColor:
+                  selectedKey === "0" ? "#D1A7E1" : "transparent",
+              }}
+            >
+              <Link to="/pododo">PODODO</Link>
+            </Menu.Item>
             <Menu.Item
               key="1"
               icon={<CalendarOutlined />}

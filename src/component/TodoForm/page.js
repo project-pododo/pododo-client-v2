@@ -32,7 +32,9 @@ const FormPage = ({ onSubmit, onDelete }) => {
   );
 
   return (
-    <div style={{ padding: 16 }}>
+    <div
+      style={{ padding: 16, backgroundColor: "#F0DAFF", minHeight: "100vh" }}
+    >
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <Dropdown overlay={menu} trigger={["click"]}>
           <Button
@@ -44,9 +46,26 @@ const FormPage = ({ onSubmit, onDelete }) => {
       </div>
 
       <Form layout="vertical" form={form} onFinish={handleFinish}>
-        <Form.Item name="title" label="제목" rules={[{ required: true }]}>
-          <Input placeholder="제목을 입력하세요" />
+        <Form.Item name="title" rules={[{ required: true }]}>
+          <Input placeholder="제목" />
         </Form.Item>
+
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            width: "100%",
+            marginBottom: 24
+          }}
+        >
+          <img
+            src="/images/Clock.svg"
+            alt="날짜"
+            style={{ width: 20, height: 20 }}
+          />
+          <RangePicker style={{ flex: 1, minWidth: 0 }} />
+        </div>
 
         <Form.Item>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -58,12 +77,8 @@ const FormPage = ({ onSubmit, onDelete }) => {
           </div>
         </Form.Item>
 
-        <Form.Item name="dateRange" label="날짜 선택">
-          <RangePicker style={{ width: "100%" }} />
-        </Form.Item>
-
-        <Form.Item name="content" label="내용">
-          <Input.TextArea rows={4} placeholder="내용을 입력하세요" />
+        <Form.Item name="content">
+          <Input.TextArea rows={4} placeholder="내용" />
         </Form.Item>
 
         <Form.Item>
