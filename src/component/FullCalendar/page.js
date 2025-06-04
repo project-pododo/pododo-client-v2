@@ -8,8 +8,8 @@ import listPlugin from "@fullcalendar/list";
 
 const CalendarPage = () => {
   const [events, setEvents] = useState([
-    { id: "1", title: "회의", date: "2025-05-15" },
-    { id: "2", title: "업무 마감", date: "2025-05-18" },
+    { id: "1", title: "회의", date: "2025-06-15" },
+    { id: "2", title: "업무 마감", date: "2025-06-18" },
   ]);
 
   // 날짜 클릭 → 새 투두 추가

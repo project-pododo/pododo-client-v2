@@ -1,6 +1,15 @@
 // src/component/SideInputForm.jsx
 import React, { useState } from "react";
-import { Input, Button, Form, Dropdown, Menu, DatePicker, Switch } from "antd";
+import {
+  Input,
+  Button,
+  Form,
+  Dropdown,
+  Menu,
+  DatePicker,
+  Switch,
+  Select,
+} from "antd";
 import { MoreOutlined } from "@ant-design/icons";
 // import dayjs from "dayjs";
 
@@ -8,7 +17,15 @@ const { RangePicker } = DatePicker;
 
 const FormPage = ({ onSubmit, onDelete }) => {
   const [form] = Form.useForm();
-  const [isToggleOn, setIsToggleOn] = useState(false);
+  const [isToggleOn, setIsToggleOn] = useState(true);
+  const [selectedType, setSelectedType] = useState("Atype");
+
+  const typeColorMap = {
+    Atype: "#FF6B6B", // 빨강
+    Btype: "#4ECDC4", // 민트
+    Ctype: "#FFD93D", // 노랑
+    Dtype: "#1A535C", // 딥 블루
+  };
 
   const handleFinish = (values) => {
     const formattedValues = {
@@ -45,7 +62,7 @@ const FormPage = ({ onSubmit, onDelete }) => {
         </Dropdown>
       </div>
 
-      <Form layout="vertical" form={form} onFinish={handleFinish}>
+      <Form layout="vertical" form={form} onFinish={handleFinish} initialValues={{ type: "Atype" }}>
         <Form.Item name="title" rules={[{ required: true }]}>
           <Input placeholder="제목" />
         </Form.Item>
@@ -56,7 +73,7 @@ const FormPage = ({ onSubmit, onDelete }) => {
             alignItems: "center",
             gap: 8,
             width: "100%",
-            marginBottom: 24
+            marginBottom: 24,
           }}
         >
           <img
@@ -77,13 +94,58 @@ const FormPage = ({ onSubmit, onDelete }) => {
           </div>
         </Form.Item>
 
+        <Form.Item name="repeat" label="반복">
+          <Select placeholder="반복">
+            <Select.Option value="none">반복 없음</Select.Option>
+            <Select.Option value="daily">매일</Select.Option>
+            <Select.Option value="weekly">매주</Select.Option>
+            <Select.Option value="monthly">매월</Select.Option>
+          </Select>
+        </Form.Item>
+
         <Form.Item name="content">
           <Input.TextArea rows={4} placeholder="내용" />
         </Form.Item>
 
+        <Form.Item
+          name="type"
+          label={
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              {selectedType && (
+                <div
+                  style={{
+                    width: 14,
+                    height: 14,
+                    borderRadius: 4,
+                    backgroundColor: typeColorMap[selectedType],
+                    border: "1px solid #ccc",
+                  }}
+                />
+              )}
+              <span>타입</span>
+            </div>
+          }
+        >
+          <Select
+            placeholder="타입"
+            onChange={(value) => setSelectedType(value)}
+            allowClear
+          >
+            <Select.Option value="Atype">A타입</Select.Option>
+            <Select.Option value="Btype">B타입</Select.Option>
+            <Select.Option value="Ctype">C타입</Select.Option>
+            <Select.Option value="Dtype">D타입</Select.Option>
+          </Select>
+        </Form.Item>
+
         <Form.Item>
-          <Button type="primary" htmlType="submit" block>
-            저장
+          <Button
+            type="primary"
+            htmlType="button"
+            block
+            style={{ borderRadius: "20px" }}
+          >
+            집중모드
           </Button>
         </Form.Item>
       </Form>
