@@ -8,9 +8,8 @@ import {
 } from "react-router-dom";
 import { Layout, Menu } from "antd";
 import {
-  FormOutlined,
+  UserOutlined,
   UnorderedListOutlined,
-  CheckCircleOutlined,
   DeleteOutlined,
   CalendarOutlined,
   VerticalLeftOutlined,
@@ -24,6 +23,7 @@ import CompletedList from "./component/CompletedList";
 import CalendarPage from "./component/CalendarPage";
 import FullCalendar from "./component/FullCalendar/page";
 import TodoForm from "./component/TodoForm/page";
+import { Pie } from "@ant-design/charts";
 
 const { Sider, Content } = Layout;
 
@@ -33,7 +33,7 @@ const App = () => {
   const [selectedKey, setSelectedKey] = useState("1");
   const navigate = useNavigate();
   const location = useLocation();
-  const [isSideVisible, setIsSideVisible] = useState(false);
+  const [isSideVisible, setIsSideVisible] = useState(true);
 
   const handleUpdateNote = (id, updateNote) => {
     setNotes((prevNotes) =>
@@ -65,13 +65,52 @@ const App = () => {
     }
   };
 
+  // 도넛 차트 테스트 데이터
+  const donutData = [
+    { type: "완료", value: 27 },
+    { type: "진행 중", value: 25 },
+    { type: "미완료", value: 18 },
+    { type: "보류", value: 30 },
+  ];
+
+  const config = {
+    appendPadding: 10,
+    data: donutData,
+    angleField: "value",
+    colorField: "type",
+    radius: 1,
+    innerRadius: 0.6,
+    // label: {
+    //   type: "inner",
+    //   offset: "-50%",
+    //   content: (obj) => {
+    //     // obj 안에 뭐가 있는지 확인
+    //     console.log(obj);
+    //     // 예를 들어 obj.type, obj.percent 사용 가능
+    //     return obj.type; // 혹은 obj.percent * 100 + '%'
+    //   },
+    //   style: {
+    //     textAlign: "center",
+    //     fontSize: 12,
+    //   },
+    // },
+    interactions: [{ type: "element-active" }],
+  };
+
+  const [dailyList] = useState([
+    "회의 참석",
+    "기획서 작성",
+    "코드 리뷰",
+    "운동하기",
+  ]);
+
   useEffect(() => {
     switch (location.pathname) {
       case "/":
-        setSelectedKey("1");
-        break;
-      case "/list":
         setSelectedKey("2");
+        break;
+      case "/user":
+        setSelectedKey("1");
         break;
       case "/completed":
         setSelectedKey("3");
@@ -79,56 +118,16 @@ const App = () => {
       case "/rubbish":
         setSelectedKey("4");
         break;
-      case "/CalendarPage":
+      case "/logo":
         setSelectedKey("5");
         break;
-      case "/NoteForm":
-        setSelectedKey("6");
-        break;
       default:
-        setSelectedKey("1");
+        setSelectedKey("2");
     }
   }, [location.pathname]);
 
   return (
-    <Layout style={{ height: "100vh" }}>
-      {/* <Header
-        style={{
-          backgroundColor: "#D1A7E1",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: "0 20px",
-          cursor: "pointer",
-        }}
-      >
-        <h1 style={{ color: "white", margin: 0 }} onClick={() => navigate("/")}>
-          PODODO
-          <img
-            src="/images/icon-grapes.png"
-            alt="logo"
-            style={{ width: "28px", marginLeft: "4px" }}
-          />
-        </h1>{" "}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
-            marginRight: "20px",
-          }}
-        >
-          <Badge count={isOverdueCount} showZero offset={[10, 0]}>
-            <Avatar
-              ref={avatarRef}
-              size="large"
-              icon={<UserOutlined />}
-              style={{ backgroundColor: "#ffffff", color: "#D1A7E1" }}
-            />{" "}
-          </Badge>
-        </div>
-      </Header> */}
-
+    <Layout style={{ height: "100vh", overflow: "hidden" }}>
       <Layout>
         <Sider
           collapsed={true}
@@ -136,114 +135,140 @@ const App = () => {
           width={80}
           className="site-layout-background"
         >
-          <Menu
-            mode="inline"
-            selectedKeys={[selectedKey]}
-            inlineCollapsed={true}
-            style={{ height: "100vh", backgroundColor: "#F4E6F1" }}
-            onSelect={({ key }) => {
-              setSelectedKey(key);
-              switch (key) {
-                case "0":
-                  navigate("/pododo");
-                  break;
-                case "1":
-                  navigate("/");
-                  break;
-                case "2":
-                  navigate("/list");
-                  break;
-                case "3":
-                  navigate("/completed");
-                  break;
-                case "4":
-                  navigate("/rubbish");
-                  break;
-                case "5":
-                  navigate("/CalendarPage");
-                  break;
-                case "6":
-                  navigate("/NoteForm");
-                  break;
-                default:
-                  navigate("/");
-              }
+          <div
+            style={{
+              height: "100vh",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              backgroundColor: "#F4E6F1",
+              overflow: "hidden",
             }}
           >
-            <Menu.Item
-              key="0"
-              style={{
-                padding: 0,
-                fontWeight: "bold",
-                textAlign: "center",
-                backgroundColor:
-                  selectedKey === "0" ? "#D1A7E1" : "transparent",
+            <Menu
+              mode="inline"
+              selectedKeys={[selectedKey]}
+              inlineCollapsed={true}
+              style={{ backgroundColor: "transparent" }}
+              onSelect={({ key }) => {
+                setSelectedKey(key);
+                switch (key) {
+                  case "0":
+                    setSelectedKey("2");
+                    navigate("/");
+                    break;
+                  case "1":
+                    setSelectedKey("1");
+                    navigate("/user");
+                    break;
+                  case "2":
+                    setSelectedKey("2");
+                    navigate("/");
+                    break;
+                  case "3":
+                    setSelectedKey("3");
+                    navigate("/completed");
+                    break;
+                  case "4":
+                    setSelectedKey("4");
+                    navigate("/rubbish");
+                    break;
+                  case "5":
+                    setSelectedKey("5");
+                    navigate("/logo");
+                    break;
+                  default:
+                    navigate("/");
+                }
               }}
             >
-              <Link to="/pododo">PODODO</Link>
-            </Menu.Item>
-            <Menu.Item
-              key="1"
-              icon={<CalendarOutlined />}
-              style={{
-                backgroundColor:
-                  selectedKey === "1" ? "#D1A7E1" : "transparent",
-              }}
+              <Menu.Item
+                key="0"
+                style={{
+                  padding: 0,
+                  fontWeight: "bold",
+                  textAlign: "center",
+                  backgroundColor:
+                    selectedKey === "0" ? "#D1A7E1" : "transparent",
+                }}
+              >
+                <Link to="/">PODODO</Link>
+              </Menu.Item>
+              <Menu.Item
+                key="1"
+                icon={<UserOutlined />}
+                style={{
+                  backgroundColor:
+                    selectedKey === "1" ? "#D1A7E1" : "transparent",
+                }}
+              >
+                <Link to="/user">USER</Link>
+              </Menu.Item>
+              <Menu.Item
+                key="2"
+                icon={<CalendarOutlined />}
+                style={{
+                  backgroundColor:
+                    selectedKey === "2" ? "#D1A7E1" : "transparent",
+                }}
+              >
+                <Link to="/">FullCalendar</Link>
+              </Menu.Item>
+              <Menu.Item
+                key="3"
+                icon={<UnorderedListOutlined />}
+                style={{
+                  backgroundColor:
+                    selectedKey === "3" ? "#D1A7E1" : "transparent",
+                }}
+              >
+                <Link to="/completed">CompletedList</Link>
+              </Menu.Item>
+              <Menu.Item
+                key="4"
+                icon={<DeleteOutlined />}
+                style={{
+                  color: "red",
+                  backgroundColor:
+                    selectedKey === "4" ? "#D1A7E1" : "transparent",
+                }}
+              >
+                <Link to="/rubbish">휴지통</Link>
+              </Menu.Item>
+            </Menu>
+            <Menu
+              mode="inline"
+              selectedKeys={[selectedKey]}
+              inlineCollapsed={true}
+              style={{ backgroundColor: "transparent" }}
             >
-              <Link to="/">FullCalendar</Link>
-            </Menu.Item>
-            <Menu.Item
-              key="2"
-              icon={<UnorderedListOutlined />}
-              style={{
-                backgroundColor:
-                  selectedKey === "2" ? "#D1A7E1" : "transparent",
-              }}
-            >
-              <Link to="/list">NoteList</Link>
-            </Menu.Item>
-            <Menu.Item
-              key="3"
-              icon={<CheckCircleOutlined />}
-              style={{
-                backgroundColor:
-                  selectedKey === "3" ? "#D1A7E1" : "transparent",
-              }}
-            >
-              <Link to="/completed">CompletedList</Link>
-            </Menu.Item>
-            <Menu.Item
-              key="4"
-              icon={<DeleteOutlined />}
-              style={{
-                color: "red",
-                backgroundColor:
-                  selectedKey === "4" ? "#D1A7E1" : "transparent",
-              }}
-            >
-              <Link to="/rubbish">휴지통</Link>
-            </Menu.Item>
-            <Menu.Item
-              key="5"
-              icon={<CalendarOutlined />}
-              style={{
-                backgroundColor:
-                  selectedKey === "5" ? "#D1A7E1" : "transparent",
-              }}
-            >
-              <Link to="/CalendarPage">Calendar</Link>
-            </Menu.Item>
-            <Menu.Item
-              key="6"
-              icon={<FormOutlined />}
-              style={{
-                backgroundColor:
-                  selectedKey === "6" ? "#D1A7E1" : "transparent",
-              }}
-            >
-              <Link to="/NoteForm">NoteForm</Link>
-            </Menu.Item>
-          </Menu>
+              <Menu.Item
+                key="5"
+                icon={
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      height: "100%",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <img
+                      src="/images/icon-grapes.png"
+                      alt="logo"
+                      style={{ width: "24px" }}
+                    />
+                  </div>
+                }
+                style={{
+                  backgroundColor:
+                    selectedKey === "5" ? "#D1A7E1" : "transparent",
+                }}
+              >
+                <Link to="/logo">LOGO</Link>
+              </Menu.Item>
+            </Menu>
+          </div>
         </Sider>
 
         <Layout
@@ -252,8 +277,10 @@ const App = () => {
             flex: 1,
             height: "100vh",
             flexDirection: "row",
+            overflow: "hidden",
           }}
         >
+          {/* chart */}
           <Layout
             style={{
               width: "20%",
@@ -262,7 +289,61 @@ const App = () => {
             }}
           >
             <Content style={{ padding: "16px" }}>
-              <div style={{ height: "100%", backgroundColor: "#fefefe" }}></div>
+              <div
+                style={{
+                  height: "100%",
+                  backgroundColor: "#fefefe",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "8px",
+                }}
+              >
+                {/* 1. 데일리 리스트 */}
+                <div
+                  style={{
+                    flex: 1,
+                    backgroundColor: "#fefefe",
+                    padding: "8px",
+                    borderRadius: "8px",
+                  }}
+                >
+                  <h4 style={{ margin: "0 0 8px" }}>Test List</h4>
+                  <ul style={{ paddingLeft: "16px", margin: 0 }}>
+                    {dailyList.map((item, index) => (
+                      <li key={index}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* 2. 도넛 차트 */}
+                <div
+                  style={{
+                    flex: 1,
+                    backgroundColor: "#fefefe",
+                    padding: "8px",
+                    borderRadius: "8px",
+                  }}
+                >
+                  <h4 style={{ margin: "0 0 8px" }}>Test Chart</h4>
+                  <Pie {...config} />
+                </div>
+
+                {/* 3~4. 여유 공간 */}
+                <div
+                  style={{
+                    flex: 1,
+                    backgroundColor: "#fafafa",
+                    borderRadius: "8px",
+                  }}
+                ></div>
+                <div
+                  style={{
+                    flex: 1,
+                    backgroundColor: "#fafafa",
+                    borderRadius: "8px",
+                  }}
+                ></div>
+              </div>
             </Content>
           </Layout>
 
