@@ -23,7 +23,6 @@ import CompletedList from "./component/CompletedList";
 import CalendarPage from "./component/CalendarPage";
 import FullCalendar from "./component/FullCalendar/page";
 import TodoForm from "./component/TodoForm/page";
-import { Pie } from "@ant-design/charts";
 
 const { Sider, Content } = Layout;
 
@@ -63,38 +62,6 @@ const App = () => {
       setNotes([...notes, restoreNote]);
       setRubbish(rubbish.filter((note) => note.id !== id));
     }
-  };
-
-  // 도넛 차트 테스트 데이터
-  const donutData = [
-    { type: "완료", value: 27 },
-    { type: "진행 중", value: 25 },
-    { type: "미완료", value: 18 },
-    { type: "보류", value: 30 },
-  ];
-
-  const config = {
-    appendPadding: 10,
-    data: donutData,
-    angleField: "value",
-    colorField: "type",
-    radius: 1,
-    innerRadius: 0.6,
-    // label: {
-    //   type: "inner",
-    //   offset: "-50%",
-    //   content: (obj) => {
-    //     // obj 안에 뭐가 있는지 확인
-    //     console.log(obj);
-    //     // 예를 들어 obj.type, obj.percent 사용 가능
-    //     return obj.type; // 혹은 obj.percent * 100 + '%'
-    //   },
-    //   style: {
-    //     textAlign: "center",
-    //     fontSize: 12,
-    //   },
-    // },
-    interactions: [{ type: "element-active" }],
   };
 
   const [dailyList] = useState([
@@ -325,7 +292,6 @@ const App = () => {
                   }}
                 >
                   <h4 style={{ margin: "0 0 8px" }}>Test Chart</h4>
-                  <Pie {...config} />
                 </div>
 
                 {/* 3~4. 여유 공간 */}
