@@ -23,6 +23,8 @@ import CompletedList from "./component/CompletedList";
 import CalendarPage from "./component/CalendarPage";
 import FullCalendar from "./component/FullCalendar/page";
 import TodoForm from "./component/TodoForm/page";
+import { ResponsivePie } from "@nivo/pie";
+import { ResponsiveWaffle } from "@nivo/waffle";
 
 const { Sider, Content } = Layout;
 
@@ -92,6 +94,45 @@ const App = () => {
         setSelectedKey("2");
     }
   }, [location.pathname]);
+
+  const donutData = [
+    { id: "완료", label: "완료", value: 27 },
+    { id: "진행 중", label: "진행 중", value: 25 },
+    { id: "미완료", label: "미완료", value: 18 },
+    { id: "보류", label: "보류", value: 30 },
+  ];
+
+  const [isNarrow, setIsNarrow] = useState(window.innerWidth < 480);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsNarrow(window.innerWidth < 1268);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const waffleData = [
+    { id: "완료", label: "완료", value: 34, color: "#67C23A" },
+    { id: "진행 중", label: "진행 중", value: 20, color: "#409EFF" },
+    { id: "보류", label: "보류", value: 6, color: "#E6A23C" },
+    { id: "미완료", label: "미완료", value: 40, color: "#F56C6C" },
+  ];
+
+  const legends = [
+    {
+      anchor: "left",
+      direction: "column",
+      justify: false,
+      translateX: 0,
+      itemWidth: 100,
+      itemHeight: 20,
+      itemsSpacing: 4,
+      symbolSize: 20,
+      symbolShape: "square",
+    },
+  ];
 
   return (
     <Layout style={{ height: "100vh", overflow: "hidden" }}>
@@ -272,6 +313,9 @@ const App = () => {
                     backgroundColor: "#fefefe",
                     padding: "8px",
                     borderRadius: "8px",
+                    height: "25%",
+                    display: "flex",
+                    flexDirection: "column",
                   }}
                 >
                   <h4 style={{ margin: "0 0 8px" }}>Test List</h4>
@@ -289,26 +333,85 @@ const App = () => {
                     backgroundColor: "#fefefe",
                     padding: "8px",
                     borderRadius: "8px",
+                    height: "25%",
+                    display: "flex",
+                    flexDirection: "column",
                   }}
                 >
                   <h4 style={{ margin: "0 0 8px" }}>Test Chart</h4>
+                  <div style={{ height: "100%", width: "100%" }}>
+                    <ResponsivePie
+                      data={donutData}
+                      margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
+                      innerRadius={0.6}
+                      padAngle={1}
+                      cornerRadius={3}
+                      activeOuterRadiusOffset={8}
+                      colors={{ scheme: "pastel1" }}
+                      borderWidth={1}
+                      borderColor={{
+                        from: "color",
+                        modifiers: [["darker", 0.2]],
+                      }}
+                      arcLinkLabelsSkipAngle={10}
+                      arcLinkLabelsTextColor="#333"
+                      arcLinkLabelsThickness={2}
+                      arcLinkLabelsColor={{ from: "color" }}
+                      arcLabelsSkipAngle={10}
+                      arcLabelsTextColor={{
+                        from: "color",
+                        modifiers: [["darker", 2]],
+                      }}
+                    />
+                  </div>
                 </div>
 
-                {/* 3~4. 여유 공간 */}
+                {/* 3. 여유 공간 */}
                 <div
                   style={{
                     flex: 1,
                     backgroundColor: "#fafafa",
                     borderRadius: "8px",
+                    height: "25%",
+                    display: "flex",
+                    flexDirection: "column",
                   }}
                 ></div>
+
+                {/* 4. 와플 차트 */}
                 <div
                   style={{
                     flex: 1,
-                    backgroundColor: "#fafafa",
+                    backgroundColor: "#fefefe",
+                    padding: "8px",
                     borderRadius: "8px",
+                    height: "25%",
+                    display: "flex",
+                    flexDirection: "column",
                   }}
-                ></div>
+                >
+                  <h4 style={{ margin: "0 0 8px" }}>Test Waffle</h4>
+                  <div style={{ height: "100%", width: "100%" }}>
+                    <ResponsiveWaffle
+                      data={waffleData}
+                      total={100}
+                      rows={10}
+                      columns={10}
+                      fillDirection="top"
+                      padding={1}
+                      colors={waffleData.map((d) => d.color)}
+                      colorBy="id"
+                      borderColor={{
+                        from: "color",
+                        modifiers: [["darker", 0.3]],
+                      }}
+                      animate={true}
+                      motionStiffness={90}
+                      motionDamping={11}
+                      legends={!isNarrow ? legends : undefined}
+                    />
+                  </div>
+                </div>
               </div>
             </Content>
           </Layout>
