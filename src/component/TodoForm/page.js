@@ -25,6 +25,7 @@ const FormPage = ({ onSubmit, onDelete }) => {
     Btype: "#4ECDC4", // 민트
     Ctype: "#FFD93D", // 노랑
     Dtype: "#1A535C", // 딥 블루
+    Etype: "#ba68c8", // 기본 보라
   };
 
   const handleFinish = (values) => {
@@ -135,6 +136,7 @@ const FormPage = ({ onSubmit, onDelete }) => {
             <Select.Option value="Btype">B타입</Select.Option>
             <Select.Option value="Ctype">C타입</Select.Option>
             <Select.Option value="Dtype">D타입</Select.Option>
+            <Select.Option value="Etype">E타입</Select.Option>
           </Select>
         </Form.Item>
 

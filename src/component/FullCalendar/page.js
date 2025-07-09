@@ -8,9 +8,25 @@ import listPlugin from "@fullcalendar/list";
 
 const CalendarPage = () => {
   const [events, setEvents] = useState([
-    { id: "1", title: "회의", date: "2025-06-15" },
-    { id: "2", title: "업무 마감", date: "2025-06-18" },
+    { id: "1", title: "회의", date: "2025-07-15", type: "Etype" },
+    { id: "2", title: "업무 마감", date: "2025-07-18", type: "Atype" },
+    { id: "3", title: "운동", date: "2025-07-23", type: "Btype" },
+    { id: "4", title: "외부 미팅", date: "2025-07-28", type: "Dtype" },
+    { id: "5", title: "생일", date: "2025-07-23", type: "Ctype" },
   ]);
+
+  const typeColorMap = {
+    Atype: "#FF6B6B", // 빨강
+    Btype: "#4ECDC4", // 민트
+    Ctype: "#FFD93D", // 노랑
+    Dtype: "#1A535C", // 딥 블루
+    Etype: "#ba68c8", // 기본 보라
+  };
+
+  const ColoreEvents = events.map((event) => ({
+    ...event,
+    color: typeColorMap[event.type] || "#888888",
+  }));
 
   // 날짜 클릭 → 새 투두 추가
   const handleDateClick = (info) => {
@@ -57,7 +73,7 @@ const CalendarPage = () => {
           initialView="dayGridMonth"
           editable={true}
           selectable={true}
-          events={events}
+          events={ColoreEvents}
           dateClick={handleDateClick}
           eventClick={handleEventClick}
           height="100%"
