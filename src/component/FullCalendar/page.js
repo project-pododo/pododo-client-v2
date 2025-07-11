@@ -25,7 +25,7 @@ const CalendarPage = () => {
 
   const ColoreEvents = events.map((event) => ({
     ...event,
-    color: typeColorMap[event.type] || "#888888",
+    color: typeColorMap[event.type] || "#ba68c8",
   }));
 
   // 날짜 클릭 → 새 투두 추가
