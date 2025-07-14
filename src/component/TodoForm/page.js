@@ -1,5 +1,4 @@
-// src/component/SideInputForm.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Input,
   Button,
@@ -11,7 +10,7 @@ import {
   Select,
 } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
-// import dayjs from "dayjs";
+import dayjs from "dayjs";
 
 const { RangePicker } = DatePicker;
 
@@ -21,12 +20,35 @@ const FormPage = ({ onSubmit, onDelete }) => {
   const [selectedType, setSelectedType] = useState("Atype");
 
   const typeColorMap = {
-    Atype: "#FF6B6B", // 빨강
+    Atype: "#ba68c8", // 기본 보라
     Btype: "#4ECDC4", // 민트
     Ctype: "#FFD93D", // 노랑
     Dtype: "#1A535C", // 딥 블루
-    Etype: "#ba68c8", // 기본 보라
+    Etype: "#FF6B6B", // 빨강
   };
+
+  useEffect(() => {
+    const handleReset = (e) => {
+      const { date } = e.detail;
+      form.resetFields();
+      form.setFieldsValue({
+        title: "",
+        dateRange: date
+          ? [dayjs(date, "YYYY-MM-DD"), dayjs(date, "YYYY-MM-DD")]
+          : undefined,
+        repeat: undefined,
+        content: "",
+        type: "Atype",
+      });
+      setIsToggleOn(true);
+      setSelectedType("Atype");
+    };
+
+    window.addEventListener("resetTodoForm", handleReset);
+    return () => {
+      window.removeEventListener("resetTodoForm", handleReset);
+    };
+  }, [form]);
 
   const handleFinish = (values) => {
     const formattedValues = {
@@ -63,7 +85,12 @@ const FormPage = ({ onSubmit, onDelete }) => {
         </Dropdown>
       </div>
 
-      <Form layout="vertical" form={form} onFinish={handleFinish} initialValues={{ type: "Atype" }}>
+      <Form
+        layout="vertical"
+        form={form}
+        onFinish={handleFinish}
+        initialValues={{ type: "Atype", dateRange: [dayjs(), dayjs()] }}
+      >
         <Form.Item name="title" rules={[{ required: true }]}>
           <Input placeholder="제목" />
         </Form.Item>
@@ -82,7 +109,9 @@ const FormPage = ({ onSubmit, onDelete }) => {
             alt="날짜"
             style={{ width: 20, height: 20 }}
           />
-          <RangePicker style={{ flex: 1, minWidth: 0 }} />
+          <Form.Item name="dateRange" noStyle>
+            <RangePicker style={{ flex: 1, minWidth: 0 }} />
+          </Form.Item>
         </div>
 
         <Form.Item>

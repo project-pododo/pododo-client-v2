@@ -35,7 +35,7 @@ const App = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isSideVisible, setIsSideVisible] = useState(true);
-
+ 
   const handleUpdateNote = (id, updateNote) => {
     setNotes((prevNotes) =>
       prevNotes.map((note) => (note.id === id ? updateNote : note))
@@ -133,6 +133,18 @@ const App = () => {
       symbolShape: "square",
     },
   ];
+
+  useEffect(() => {
+    const handleToggleSidebar = (e) => {
+      if (e.detail?.open === true && isSideVisible === false) {
+        setIsSideVisible(true);
+        setTimeout(() => window.dispatchEvent(new Event("resize")), 300);
+      }
+    };
+    window.addEventListener("toggleSidebar", handleToggleSidebar);
+    return () => window.removeEventListener("toggleSidebar", handleToggleSidebar);
+  }, [isSideVisible]);
+  
 
   return (
     <Layout style={{ height: "100vh", overflow: "hidden" }}>
@@ -460,7 +472,22 @@ const App = () => {
                       />
                     }
                   />
-                  <Route path="/CalendarPage" element={<CalendarPage />} />
+                  <Route
+                    path="/CalendarPage"
+                    element={
+                      <CalendarPage
+                        onDateClick={(clickedDate) => {
+                          setIsSideVisible(true);
+                          window.dispatchEvent(
+                            new CustomEvent("resetTodoForm", {
+                              detail: { date: clickedDate },
+                            })
+                          );
+                        }}
+                      />
+                    }
+                  />
+
                   <Route
                     path="/NoteForm"
                     element={<NoteForm onAdd={handleAddNote} />}

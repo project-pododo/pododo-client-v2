@@ -6,7 +6,7 @@ import interactionPlugin from "@fullcalendar/interaction";
 import "../../css/pulse-theme.css";
 import listPlugin from "@fullcalendar/list";
 
-const CalendarPage = () => {
+const CalendarPage = ({onDateClick}) => {
   const [events, setEvents] = useState([
     { id: "1", title: "회의", date: "2025-07-15", type: "Etype" },
     { id: "2", title: "업무 마감", date: "2025-07-18", type: "Atype" },
@@ -16,11 +16,11 @@ const CalendarPage = () => {
   ]);
 
   const typeColorMap = {
-    Atype: "#FF6B6B", // 빨강
+    Atype: "#ba68c8", // 기본 보라
     Btype: "#4ECDC4", // 민트
     Ctype: "#FFD93D", // 노랑
     Dtype: "#1A535C", // 딥 블루
-    Etype: "#ba68c8", // 기본 보라
+    Etype: "#FF6B6B", // 빨강
   };
 
   const ColoreEvents = events.map((event) => ({
@@ -30,16 +30,10 @@ const CalendarPage = () => {
 
   // 날짜 클릭 → 새 투두 추가
   const handleDateClick = (info) => {
-    const title = prompt("할 일 제목을 입력하세요:");
-    if (title) {
-      const newEvent = {
-        id: String(events.length + 1),
-        title,
-        date: info.dateStr,
-      };
-      setEvents([...events, newEvent]);
-    }
+    window.dispatchEvent(new CustomEvent("toggleSidebar", { detail: { open: true } }));
+    window.dispatchEvent(new CustomEvent("resetTodoForm", { detail: { date: info.dateStr } }));
   };
+  
 
   // 이벤트 클릭 → 삭제
   const handleEventClick = (info) => {
@@ -82,7 +76,6 @@ const CalendarPage = () => {
             left: "prev,next today",
             center: "title",
             right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek",
-            // listWeek, listMonth, listDay 형식으로 세팅 가능
           }}
         />
       )}
