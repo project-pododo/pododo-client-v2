@@ -6,7 +6,7 @@ import {
   useNavigate,
   useLocation,
 } from "react-router-dom";
-import { Layout, Menu } from "antd";
+import { Layout, Menu, List, Switch, Typography } from "antd";
 import {
   UserOutlined,
   UnorderedListOutlined,
@@ -25,6 +25,7 @@ import FullCalendar from "./component/FullCalendar/page";
 import TodoForm from "./component/TodoForm/page";
 import { ResponsivePie } from "@nivo/pie";
 import { ResponsiveWaffle } from "@nivo/waffle";
+import dayjs from "dayjs";
 
 const { Sider, Content } = Layout;
 
@@ -35,7 +36,7 @@ const App = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isSideVisible, setIsSideVisible] = useState(true);
- 
+
   const handleUpdateNote = (id, updateNote) => {
     setNotes((prevNotes) =>
       prevNotes.map((note) => (note.id === id ? updateNote : note))
@@ -66,12 +67,23 @@ const App = () => {
     }
   };
 
-  const [dailyList] = useState([
-    "회의 참석",
-    "기획서 작성",
-    "코드 리뷰",
-    "운동하기",
+  const { Text } = Typography;
+
+  const [dailyList, setDailyList] = useState([
+    // 나중에 당일 기준으로 리스트업
+    { id: 1, text: "회의 참석", done: false },
+    { id: 2, text: "기획서 작성", done: false },
+    { id: 3, text: "코드 리뷰", done: true },
+    { id: 4, text: "운동하기", done: false },
   ]);
+
+  const toggleDone = (id) => {
+    setDailyList((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, done: !item.done } : item
+      )
+    );
+  };
 
   useEffect(() => {
     switch (location.pathname) {
@@ -95,12 +107,45 @@ const App = () => {
     }
   }, [location.pathname]);
 
-  const donutData = [
-    { id: "완료", label: "완료", value: 27 },
-    { id: "진행 중", label: "진행 중", value: 25 },
-    { id: "미완료", label: "미완료", value: 18 },
-    { id: "보류", label: "보류", value: 30 },
+  const rawStatusData = [
+    { id: "완료", value: 27 },
+    { id: "진행 중", value: 25 },
+    { id: "미완료", value: 18 },
+    { id: "보류", value: 30 },
   ];
+
+  const statusColors = {
+    완료: "rgb(251, 180, 174)",
+    "진행 중": "rgb(179, 205, 227)",
+    보류: "rgb(222, 203, 228)",
+    미완료: "rgb(204, 235, 197)",
+  };
+
+  const donutData = rawStatusData.map((item) => ({
+    ...item,
+    label: item.id,
+    color: statusColors[item.id],
+  }));
+
+  const waffleData = rawStatusData.map((item) => ({
+    ...item,
+    label: item.id,
+    color: statusColors[item.id],
+  }));
+
+  // const donutData = [
+  //   { id: "완료", label: "완료", value: 27 },
+  //   { id: "진행 중", label: "진행 중", value: 25 },
+  //   { id: "미완료", label: "미완료", value: 18 },
+  //   { id: "보류", label: "보류", value: 30 },
+  // ];
+
+  // const waffleData = [
+  //   { id: "완료", label: "완료", value: 27, color: "rgb(251, 180, 174)" },
+  //   { id: "진행 중", label: "진행 중", value: 25, color: "rgb(179, 205, 227)" },
+  //   { id: "보류", label: "보류", value: 30, color: "rgb(222, 203, 228)" },
+  //   { id: "미완료", label: "미완료", value: 18, color: "rgb(204, 235, 197)" },
+  // ];
 
   const [isNarrow, setIsNarrow] = useState(window.innerWidth < 480);
 
@@ -112,13 +157,6 @@ const App = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-  const waffleData = [
-    { id: "완료", label: "완료", value: 34, color: "#67C23A" },
-    { id: "진행 중", label: "진행 중", value: 20, color: "#409EFF" },
-    { id: "보류", label: "보류", value: 6, color: "#E6A23C" },
-    { id: "미완료", label: "미완료", value: 40, color: "#F56C6C" },
-  ];
 
   const legends = [
     {
@@ -142,9 +180,9 @@ const App = () => {
       }
     };
     window.addEventListener("toggleSidebar", handleToggleSidebar);
-    return () => window.removeEventListener("toggleSidebar", handleToggleSidebar);
+    return () =>
+      window.removeEventListener("toggleSidebar", handleToggleSidebar);
   }, [isSideVisible]);
-  
 
   return (
     <Layout style={{ height: "100vh", overflow: "hidden" }}>
@@ -330,12 +368,29 @@ const App = () => {
                     flexDirection: "column",
                   }}
                 >
-                  <h4 style={{ margin: "0 0 8px" }}>Test List</h4>
-                  <ul style={{ paddingLeft: "16px", margin: 0 }}>
-                    {dailyList.map((item, index) => (
-                      <li key={index}>{item}</li>
-                    ))}
-                  </ul>
+                  <h4 style={{ margin: "0 0 8px" }}>
+                    {dayjs().format("YYYY-MM-DD")}
+                  </h4>
+                  <List
+                    size="small"
+                    bordered
+                    dataSource={dailyList}
+                    renderItem={(item) => (
+                      <List.Item
+                        actions={[
+                          <Switch
+                            size="small"
+                            checked={item.done}
+                            onChange={() => toggleDone(item.id)}
+                            checkedChildren="완료"
+                            unCheckedChildren="진행"
+                          />,
+                        ]}
+                      >
+                        <Text delete={item.done}>{item.text}</Text>
+                      </List.Item>
+                    )}
+                  />
                 </div>
 
                 {/* 2. 도넛 차트 */}

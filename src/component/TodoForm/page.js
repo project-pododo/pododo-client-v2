@@ -63,9 +63,16 @@ const FormPage = ({ onSubmit, onDelete }) => {
     setIsToggleOn(false);
   };
 
+  const handleDelete = () => {
+    const shouldDelete = window.confirm("이 일정을 삭제할까요?");
+    if (shouldDelete) {
+      onDelete();
+    }
+  };
+  
   const menu = (
     <Menu>
-      <Menu.Item key="1" danger onClick={onDelete}>
+      <Menu.Item key="1" danger onClick={handleDelete}>
         삭제
       </Menu.Item>
     </Menu>
