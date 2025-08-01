@@ -443,7 +443,9 @@ const App = () => {
                     display: "flex",
                     flexDirection: "column",
                   }}
-                ></div>
+                >
+                  <h4 style={{ margin: "0 0 8px" }}>여유 공간</h4>
+                </div>
 
                 {/* 4. 와플 차트 */}
                 <div
