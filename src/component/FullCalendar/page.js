@@ -8,11 +8,11 @@ import listPlugin from "@fullcalendar/list";
 
 const CalendarPage = ({onDateClick}) => {
   const [events, setEvents] = useState([
-    { id: "1", title: "회의", date: "2025-07-15", type: "Etype" },
-    { id: "2", title: "업무 마감", date: "2025-07-18", type: "Atype" },
-    { id: "3", title: "운동", date: "2025-07-23", type: "Btype" },
-    { id: "4", title: "외부 미팅", date: "2025-07-28", type: "Dtype" },
-    { id: "5", title: "생일", date: "2025-07-23", type: "Ctype" },
+    { id: "1", title: "회의", date: "2025-08-15", type: "Etype" },
+    { id: "2", title: "업무 마감", date: "2025-08-18", type: "Atype" },
+    { id: "3", title: "운동", date: "2025-08-23", type: "Btype" },
+    { id: "4", title: "외부 미팅", date: "2025-08-28", type: "Dtype" },
+    { id: "5", title: "기획서 작성", date: "2025-08-23", type: "Ctype" },
   ]);
 
   const typeColorMap = {
@@ -34,7 +34,6 @@ const CalendarPage = ({onDateClick}) => {
     window.dispatchEvent(new CustomEvent("resetTodoForm", { detail: { date: info.dateStr } }));
   };
   
-
   // 이벤트 클릭 → 삭제
   const handleEventClick = (info) => {
     const shouldDelete = window.confirm("이 일정을 삭제할까요?");
