@@ -5,27 +5,14 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import "../../css/pulse-theme.css";
 import listPlugin from "@fullcalendar/list";
+import { initialCalendarEvents, eventColorMap } from "../.././TestData/TestData";
 
 const CalendarPage = ({onDateClick}) => {
-  const [events, setEvents] = useState([
-    { id: "1", title: "회의", date: "2025-08-15", type: "Etype" },
-    { id: "2", title: "업무 마감", date: "2025-08-18", type: "Atype" },
-    { id: "3", title: "운동", date: "2025-08-23", type: "Btype" },
-    { id: "4", title: "외부 미팅", date: "2025-08-28", type: "Dtype" },
-    { id: "5", title: "기획서 작성", date: "2025-08-23", type: "Ctype" },
-  ]);
-
-  const typeColorMap = {
-    Atype: "#ba68c8", // 기본 보라
-    Btype: "#4ECDC4", // 민트
-    Ctype: "#FFD93D", // 노랑
-    Dtype: "#1A535C", // 딥 블루
-    Etype: "#FF6B6B", // 빨강
-  };
+  const [events, setEvents] = useState(initialCalendarEvents);
 
   const ColoreEvents = events.map((event) => ({
     ...event,
-    color: typeColorMap[event.type] || "#ba68c8",
+    color: eventColorMap[event.type] || "#ba68c8",
   }));
 
   // 날짜 클릭 → 새 투두 추가
@@ -38,7 +25,7 @@ const CalendarPage = ({onDateClick}) => {
   const handleEventClick = (info) => {
     const shouldDelete = window.confirm("이 일정을 삭제할까요?");
     if (shouldDelete) {
-      const updatedEvents = events.filter((e) => e.id !== info.event.id);
+      const updatedEvents = events.filter((e) => String(e.id)!== info.event.id);
       setEvents(updatedEvents);
     }
   };
