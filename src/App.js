@@ -15,7 +15,7 @@ import {
   VerticalLeftOutlined,
   VerticalRightOutlined,
 } from "@ant-design/icons";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo} from "react";
 import NoteForm from "./component/NoteForm";
 import NoteList from "./component/NoteList";
 import RubbishList from "./component/RubbishList";
@@ -26,8 +26,44 @@ import TodoForm from "./component/TodoForm/page";
 import { ResponsivePie } from "@nivo/pie";
 import { ResponsiveWaffle } from "@nivo/waffle";
 import dayjs from "dayjs";
+import { initialCalendarEvents, statusColors, } from  "./TestData/TestData";
 
 const { Sider, Content } = Layout;
+
+const getDailyListAndStatusData = (events) => {
+  const today = dayjs().format("YYYY-MM-DD");
+
+  const todayEvents = events.filter((event) => event.date === today);
+  const dailyList = todayEvents.map((event, index) => ({
+    id: event.id,
+    text: event.title,
+    done: event.statusID === "done",
+  }));
+
+  const statusCount = events.reduce((acc, event) => {
+    let statusKey = "";
+    switch (event.statusID) {
+      case 'incomplete': statusKey = '미완료'; break;
+      case 'created': statusKey = '생성'; break;
+      case 'pause': statusKey = '보류'; break;
+      case 'done': statusKey = '완료'; break;
+      default: statusKey = '미생성';
+    }
+    acc[statusKey] = (acc[statusKey] || 0) + 1;
+    return acc;
+  }, {});
+  const rawStatusData = Object.entries(statusCount).map(([key, value]) => ({ id: key, value }));
+
+  const totalCount = rawStatusData.reduce((sum, item) => sum + item.value, 0);
+  const noneValue = Math.max(0, 100 - totalCount);
+
+  if (noneValue > 0 || totalCount === 100) {
+    rawStatusData.push({ id: "미생성", value: noneValue });
+  }
+
+  return { dailyList, rawStatusData };
+
+};
 
 const App = () => {
   const [notes, setNotes] = useState([]);
@@ -36,6 +72,13 @@ const App = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isSideVisible, setIsSideVisible] = useState(true);
+
+  const { initialDailyList, calculatedRawStatusData } = useMemo(() => {
+    const { dailyList, rawStatusData } = getDailyListAndStatusData(initialCalendarEvents);
+    return { initialDailyList: dailyList, calculatedRawStatusData: rawStatusData };
+  }, []);
+
+  const [dailyList, setDailyList] = useState(initialDailyList);
 
   const handleUpdateNote = (id, updateNote) => {
     setNotes((prevNotes) =>
@@ -69,14 +112,6 @@ const App = () => {
 
   const { Text } = Typography;
 
-  const [dailyList, setDailyList] = useState([
-    // 나중에 당일 기준으로 리스트업
-    { id: 1, text: "회의 참석", done: false },
-    { id: 2, text: "기획서 작성", done: false },
-    { id: 3, text: "코드 리뷰", done: true },
-    { id: 4, text: "운동하기", done: false },
-  ]);
-
   const toggleDone = (id) => {
     setDailyList((prev) =>
       prev.map((item) =>
@@ -107,47 +142,28 @@ const App = () => {
     }
   }, [location.pathname]);
 
-  const rawStatusData = [
-    { id: "완료", value: 27 },
-    { id: "진행 중", value: 25 },
-    { id: "미완료", value: 18 },
-    { id: "보류", value: 30 },
-  ];
-
-  const statusColors = {
-    완료: "rgb(251, 180, 174)",
-    "진행 중": "rgb(179, 205, 227)",
-    보류: "rgb(222, 203, 228)",
-    미완료: "rgb(204, 235, 197)",
-  };
-
-  const donutData = rawStatusData.map((item) => ({
-    ...item,
-    label: item.id,
-    color: statusColors[item.id],
-  }));
-
-  const waffleData = rawStatusData.map((item) => ({
-    ...item,
-    label: item.id,
-    color: statusColors[item.id],
-  }));
-
-  // const donutData = [
-  //   { id: "완료", label: "완료", value: 27 },
-  //   { id: "진행 중", label: "진행 중", value: 25 },
-  //   { id: "미완료", label: "미완료", value: 18 },
-  //   { id: "보류", label: "보류", value: 30 },
-  // ];
-
-  // const waffleData = [
-  //   { id: "완료", label: "완료", value: 27, color: "rgb(251, 180, 174)" },
-  //   { id: "진행 중", label: "진행 중", value: 25, color: "rgb(179, 205, 227)" },
-  //   { id: "보류", label: "보류", value: 30, color: "rgb(222, 203, 228)" },
-  //   { id: "미완료", label: "미완료", value: 18, color: "rgb(204, 235, 197)" },
-  // ];
-
   const [isNarrow, setIsNarrow] = useState(window.innerWidth < 480);
+
+  const desiredOrder = ["생성", "보류", "미완료", "완료", "미생성"];
+
+  const sortedRawStatusData = calculatedRawStatusData.sort((a, b) => {
+  const indexA = desiredOrder.indexOf(a.id);
+  const indexB = desiredOrder.indexOf(b.id);
+  return indexA - indexB;
+});
+  
+  const donutData = calculatedRawStatusData.filter((item) => item.id !== "미생성")
+  .map((item) => ({
+    ...item,
+    label: item.id,
+    color: statusColors[item.id],
+  }));
+
+  const waffleData = sortedRawStatusData.map((item) => ({
+    ...item,
+    label: item.id,
+    color: statusColors[item.id],
+  }));
 
   useEffect(() => {
     const handleResize = () => {
@@ -158,19 +174,19 @@ const App = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const legends = [
-    {
-      anchor: "left",
-      direction: "column",
-      justify: false,
-      translateX: 0,
-      itemWidth: 100,
-      itemHeight: 20,
-      itemsSpacing: 4,
-      symbolSize: 20,
-      symbolShape: "square",
-    },
-  ];
+  // const legends = [
+  //   {
+  //     anchor: "left",
+  //     direction: "column",
+  //     justify: false,
+  //     translateX: 0,
+  //     itemWidth: 100,
+  //     itemHeight: 20,
+  //     itemsSpacing: 4,
+  //     symbolSize: 20,
+  //     symbolShape: "square",
+  //   },
+  // ];
 
   useEffect(() => {
     const handleToggleSidebar = (e) => {
@@ -405,26 +421,27 @@ const App = () => {
                     flexDirection: "column",
                   }}
                 >
-                  <h4 style={{ margin: "0 0 8px" }}>Test Chart</h4>
+                  <h4 style={{ margin: "0 0 8px" }}>Donut Chart</h4>
                   <div style={{ height: "100%", width: "100%" }}>
                     <ResponsivePie
                       data={donutData}
-                      margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
-                      innerRadius={0.6}
-                      padAngle={1}
+                      margin={{ top: 35, right: 35, bottom: 35, left: 35 }}
+                      innerRadius={0.5}
+                      padAngle={2}
                       cornerRadius={3}
                       activeOuterRadiusOffset={8}
-                      colors={{ scheme: "pastel1" }}
+                      colors={{ datum: 'data.color' }}
                       borderWidth={1}
                       borderColor={{
                         from: "color",
                         modifiers: [["darker", 0.2]],
                       }}
-                      arcLinkLabelsSkipAngle={10}
+                      arcLinkLabelsSkipAngle={isNarrow ? 480 : 7}
                       arcLinkLabelsTextColor="#333"
-                      arcLinkLabelsThickness={2}
+                      arcLinkLabelsThickness={1}
+                      arcLinkLabelsOffset={-20}
                       arcLinkLabelsColor={{ from: "color" }}
-                      arcLabelsSkipAngle={10}
+                      arcLabelsSkipAngle={isNarrow ? 480 : 7}
                       arcLabelsTextColor={{
                         from: "color",
                         modifiers: [["darker", 2]],
@@ -433,21 +450,7 @@ const App = () => {
                   </div>
                 </div>
 
-                {/* 3. 여유 공간 */}
-                <div
-                  style={{
-                    flex: 1,
-                    backgroundColor: "#fafafa",
-                    borderRadius: "8px",
-                    height: "25%",
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                >
-                  <h4 style={{ margin: "0 0 8px" }}>여유 공간</h4>
-                </div>
-
-                {/* 4. 와플 차트 */}
+                {/* 3. 와플 차트 */}
                 <div
                   style={{
                     flex: 1,
@@ -459,14 +462,14 @@ const App = () => {
                     flexDirection: "column",
                   }}
                 >
-                  <h4 style={{ margin: "0 0 8px" }}>Test Waffle</h4>
+                  <h4 style={{ margin: "0 0 8px" }}>Waffle Chart</h4>
                   <div style={{ height: "100%", width: "100%" }}>
                     <ResponsiveWaffle
                       data={waffleData}
                       total={100}
                       rows={10}
                       columns={10}
-                      fillDirection="top"
+                      fillDirection="bottom"
                       padding={1}
                       colors={waffleData.map((d) => d.color)}
                       colorBy="id"
@@ -477,7 +480,7 @@ const App = () => {
                       animate={true}
                       motionStiffness={90}
                       motionDamping={11}
-                      legends={!isNarrow ? legends : undefined}
+                      // legends={!isNarrow ? legends : undefined}
                     />
                   </div>
                 </div>
