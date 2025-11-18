@@ -17,6 +17,12 @@
     border-radius: 4px;
     /* animation: pulse 3.5s infinite; */
   }
+
+  .fc .fc-event:hover td {
+    background-color: #D9EECB;
+    background-color: var(--fc-event-hover-bg-color, #D9EECB);
+    color: #000000;
+  }
   
   @keyframes pulse {
     0% { box-shadow: 0 0 0 0 rgba(186, 104, 200, 0.7); }
