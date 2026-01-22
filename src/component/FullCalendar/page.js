@@ -3,42 +3,31 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import "../../css/pulse-theme.css";
 import listPlugin from "@fullcalendar/list";
-import { initialCalendarEvents, eventColorMap } from "../.././TestData/TestData";
+import "../../css/pulse-theme.css";
+import { eventColorMap } from "../../TestData/TestData";
+import { useCalendar } from "../../context/CalendarContext";
 
-const CalendarPage = ({onDateClick}) => {
-  const [events, setEvents] = useState(initialCalendarEvents);
-
-  const ColoreEvents = events.map((event) => ({
-    ...event,
-    color: eventColorMap[event.type] || "#ba68c8",
-  }));
-
-  // 날짜 클릭 → 새 투두 추가
-  const handleDateClick = (info) => {
-    window.dispatchEvent(new CustomEvent("toggleSidebar", { detail: { open: true } }));
-    window.dispatchEvent(new CustomEvent("resetTodoForm", { detail: { date: info.dateStr } }));
-  };
-  
-  // 이벤트 클릭 → 삭제
-  const handleEventClick = (info) => {
-    const shouldDelete = window.confirm("이 일정을 삭제할까요?");
-    if (shouldDelete) {
-      const updatedEvents = events.filter((e) => String(e.id)!== info.event.id);
-      setEvents(updatedEvents);
-    }
-  };
-
+const CalendarPage = ({ events, onDelete, onSelectEvent, onEventDrop }) => {
+  const { openFormWithDate } = useCalendar();
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsReady(true);
     }, 100);
-
     return () => clearTimeout(timer);
   }, []);
+
+  const coloredEvents = events.map((event) => ({
+    ...event,
+    color: eventColorMap[event.type] || "#ba68c8",
+  }));
+
+  const handleDateClick = (info) => {
+    if (onSelectEvent) onSelectEvent(null);
+    openFormWithDate(info.dateStr);
+  };
 
   return (
     <div style={{ width: "100%", height: "100%", padding: "0" }}>
@@ -53,9 +42,19 @@ const CalendarPage = ({onDateClick}) => {
           initialView="dayGridMonth"
           editable={true}
           selectable={true}
-          events={ColoreEvents}
+          events={coloredEvents}
           dateClick={handleDateClick}
-          eventClick={handleEventClick}
+          eventClick={(info) => {
+            onSelectEvent(info.event);
+          }}
+          eventContextMenu={(info) => {
+            info.jsEvent.preventDefault();
+            if (window.confirm("이 일정을 삭제할까요?")) {
+              onDelete(info.event.id);
+            }
+          }}
+          eventStartEditable={true}
+          eventDrop={onEventDrop}
           height="100%"
           dayMaxEventRows={true}
           headerToolbar={{

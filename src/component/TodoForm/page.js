@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Input,
   Button,
@@ -11,65 +11,71 @@ import {
 } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
+import { useCalendar } from "../../context/CalendarContext";
 
 const { RangePicker } = DatePicker;
 
-const FormPage = ({ onSubmit, onDelete }) => {
+const FormPage = ({ initialData, onSubmit, onDelete }) => {
   const [form] = Form.useForm();
-  const [isToggleOn, setIsToggleOn] = useState(true);
-  const [selectedType, setSelectedType] = useState("Atype");
-
-  const typeColorMap = {
-    Atype: "#ba68c8", // 기본 보라
-    Btype: "#4ECDC4", // 민트
-    Ctype: "#FFD93D", // 노랑
-    Dtype: "#1A535C", // 딥 블루
-    Etype: "#FF6B6B", // 빨강
-  };
+  const [isToggleOn, setIsToggleOn] = useState(false);
+  const { selectedDate } = useCalendar();
 
   useEffect(() => {
-    const handleReset = (e) => {
-      const { date } = e.detail;
-      form.resetFields();
+    if (initialData) {
       form.setFieldsValue({
-        title: "",
-        dateRange: date
-          ? [dayjs(date, "YYYY-MM-DD"), dayjs(date, "YYYY-MM-DD")]
-          : undefined,
-        repeat: undefined,
-        content: "",
-        type: "Atype",
+        ...initialData,
+        dateRange: initialData.dateRange
+          ? [dayjs(initialData.dateRange[0]), dayjs(initialData.dateRange[1])]
+          : [dayjs(initialData.date), dayjs(initialData.date)],
       });
-      setIsToggleOn(true);
-      setSelectedType("Atype");
-    };
+      setIsToggleOn(initialData.statusID === "done");
+    } else {
+      form.resetFields();
+      if (selectedDate) {
+        form.setFieldsValue({
+          dateRange: [dayjs(selectedDate), dayjs(selectedDate)],
+          type: "Atype",
+        });
+      }
+      setIsToggleOn(false);
+    }
+  }, [initialData, selectedDate, form]);
 
-    window.addEventListener("resetTodoForm", handleReset);
-    return () => {
-      window.removeEventListener("resetTodoForm", handleReset);
-    };
-  }, [form]);
+  const handleProcessSave = useCallback(() => {
+    const values = form.getFieldsValue();
 
-  const handleFinish = (values) => {
+    if (!values.title || values.title.trim() === "") return;
+
     const formattedValues = {
       ...values,
+      id: initialData?.id,
       dateRange: values.dateRange
         ? values.dateRange.map((d) => d.format("YYYY-MM-DD"))
         : [],
       toggleStatus: isToggleOn,
     };
+
     onSubmit(formattedValues);
-    form.resetFields();
-    setIsToggleOn(false);
-  };
+
+    if (!initialData) {
+      form.resetFields();
+      setIsToggleOn(false);
+      if (selectedDate) {
+        form.setFieldsValue({
+          dateRange: [dayjs(selectedDate), dayjs(selectedDate)],
+          type: "Atype",
+        });
+      }
+    }
+  }, [form, initialData, isToggleOn, onSubmit, selectedDate]);
 
   const handleDelete = () => {
-    const shouldDelete = window.confirm("이 일정을 삭제할까요?");
-    if (shouldDelete) {
-      onDelete();
+    if (initialData?.id && window.confirm("이 일정을 삭제할까요?")) {
+      onDelete(initialData.id);
+      form.resetFields();
     }
   };
-  
+
   const menu = (
     <Menu>
       <Menu.Item key="1" danger onClick={handleDelete}>
@@ -81,23 +87,19 @@ const FormPage = ({ onSubmit, onDelete }) => {
   return (
     <div
       style={{ padding: 16, backgroundColor: "#F0DAFF", minHeight: "100vh" }}
+      onMouseLeave={handleProcessSave}
     >
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <Dropdown overlay={menu} trigger={["click"]}>
           <Button
             icon={<MoreOutlined />}
             type="text"
-            style={{ float: "right", fontSize: "18px" }}
+            style={{ fontSize: "18px" }}
           />
         </Dropdown>
       </div>
 
-      <Form
-        layout="vertical"
-        form={form}
-        onFinish={handleFinish}
-        initialValues={{ type: "Atype", dateRange: [dayjs(), dayjs()] }}
-      >
+      <Form layout="vertical" form={form} initialValues={{ type: "Atype" }} >
         <Form.Item name="title" rules={[{ required: true }]}>
           <Input placeholder="제목" />
         </Form.Item>
@@ -107,7 +109,6 @@ const FormPage = ({ onSubmit, onDelete }) => {
             display: "flex",
             alignItems: "center",
             gap: 8,
-            width: "100%",
             marginBottom: 24,
           }}
         >
@@ -117,22 +118,21 @@ const FormPage = ({ onSubmit, onDelete }) => {
             style={{ width: 20, height: 20 }}
           />
           <Form.Item name="dateRange" noStyle>
-            <RangePicker style={{ flex: 1, minWidth: 0 }} />
+            <RangePicker style={{ flex: 1 }} getPopupContainer={(trigger) => trigger.parentElement}/>
           </Form.Item>
         </div>
 
-        <Form.Item>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <span>종일</span>
-            <Switch
-              checked={isToggleOn}
-              onChange={(checked) => setIsToggleOn(checked)}
-            />
-          </div>
+        <Form.Item label="완료여부">
+          <Switch
+            checked={isToggleOn}
+            onChange={(checked) => {
+              setIsToggleOn(checked);
+            }}
+          />
         </Form.Item>
 
         <Form.Item name="repeat" label="반복">
-          <Select placeholder="반복">
+          <Select placeholder="반복 없음">
             <Select.Option value="none">반복 없음</Select.Option>
             <Select.Option value="daily">매일</Select.Option>
             <Select.Option value="weekly">매주</Select.Option>
@@ -141,33 +141,11 @@ const FormPage = ({ onSubmit, onDelete }) => {
         </Form.Item>
 
         <Form.Item name="content">
-          <Input.TextArea rows={4} placeholder="내용" />
+          <Input.TextArea rows={4} placeholder="내용을 입력하세요" />
         </Form.Item>
 
-        <Form.Item
-          name="type"
-          label={
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              {selectedType && (
-                <div
-                  style={{
-                    width: 14,
-                    height: 14,
-                    borderRadius: 4,
-                    backgroundColor: typeColorMap[selectedType],
-                    border: "1px solid #ccc",
-                  }}
-                />
-              )}
-              <span>타입</span>
-            </div>
-          }
-        >
-          <Select
-            placeholder="타입"
-            onChange={(value) => setSelectedType(value)}
-            allowClear
-          >
+        <Form.Item name="type" label="타입">
+          <Select>
             <Select.Option value="Atype">A타입</Select.Option>
             <Select.Option value="Btype">B타입</Select.Option>
             <Select.Option value="Ctype">C타입</Select.Option>
@@ -179,9 +157,8 @@ const FormPage = ({ onSubmit, onDelete }) => {
         <Form.Item>
           <Button
             type="primary"
-            htmlType="button"
             block
-            style={{ borderRadius: "20px" }}
+            style={{ borderRadius: "20px", marginTop: 10 }}
           >
             집중모드
           </Button>
