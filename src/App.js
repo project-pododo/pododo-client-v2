@@ -87,7 +87,6 @@ const App = () => {
           ? {
               ...e,
               ...formData,
-              // 계산 없이 있는 그대로 저장
               start: formData.dateRange?.[0],
               end: formData.dateRange?.[1],
               statusID: formData.toggleStatus ? "done" : "incomplete",
@@ -144,31 +143,6 @@ const App = () => {
     );
   };
 
-  // const handleEventDrop = (info) => {
-  //   const { event } = info;
-  //   const formattedStart = dayjs(event.start).format("YYYY-MM-DD");
-  //   const formattedEnd = event.end
-  //     ? dayjs(event.end).subtract(1, "day").format("YYYY-MM-DD")
-  //     : formattedStart;
-
-  //   const updatedEvent = {
-  //     ...event.extendedProps,
-  //     id: event.id,
-  //     title: event.title,
-  //     start: formattedStart,
-  //     end: formattedEnd,
-  //     dateRange: [formattedStart, formattedEnd],
-  //   };
-
-  //   setEvents((prev) =>
-  //     prev.map((e) =>
-  //       String(e.id) === String(updatedEvent.id)
-  //         ? { ...e, ...updatedEvent }
-  //         : e,
-  //     ),
-  //   );
-  // };
-
   return (
     <ConfigProvider locale={locale}>
       <Layout style={{ height: "100vh", overflow: "hidden" }}>
@@ -205,7 +179,7 @@ const App = () => {
               >
                 <Menu.Item
                   key="0"
-                  style={{ fontWeight: "bold", textAlign: "center" }}
+                  style={{ fontWeight: "bold", textAlign: "center", padding: "0px" }}
                 >
                   <Link to="/">PODODO</Link>
                 </Menu.Item>

@@ -22,11 +22,14 @@ const FormPage = ({ initialData, onSubmit, onDelete }) => {
 
   useEffect(() => {
     if (initialData) {
+      const startDate = initialData.start || initialData.date;
+      const endDate = initialData.end || initialData.date;
+
       form.setFieldsValue({
         ...initialData,
-        dateRange: initialData.dateRange
-          ? [dayjs(initialData.dateRange[0]), dayjs(initialData.dateRange[1])]
-          : [dayjs(initialData.date), dayjs(initialData.date)],
+        dateRange: startDate && endDate 
+        ? [dayjs(startDate), dayjs(endDate)] 
+        : [null, null],
       });
       setIsToggleOn(initialData.statusID === "done");
     } else {
