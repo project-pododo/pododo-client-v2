@@ -23,6 +23,9 @@ import locale from "antd/es/date-picker/locale/ko_KR";
 
 import FullCalendar from "./component/FullCalendar/page";
 import TodoForm from "./component/TodoForm/page";
+import LoginPage from "./component/LoginForm/page";
+import DeleteList from "./component/DeleteList/page";
+
 import { ResponsivePie } from "@nivo/pie";
 import { ResponsiveWaffle } from "@nivo/waffle";
 import { initialCalendarEvents } from "./TestData/TestData";
@@ -76,35 +79,36 @@ const App = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
 
   const handleSaveEvent = (formData) => {
-  if (!formData.title) return;
+    if (!formData.title) return;
 
-  setEvents((prev) => {
-    const isExisting = formData.id && prev.some((e) => String(e.id) === String(formData.id));
+    setEvents((prev) => {
+      const isExisting =
+        formData.id && prev.some((e) => String(e.id) === String(formData.id));
 
-    if (isExisting) {
-      return prev.map((e) =>
-        String(e.id) === String(formData.id)
-          ? {
-              ...e,
-              ...formData,
-              start: formData.dateRange?.[0],
-              end: formData.dateRange?.[1],
-              statusID: formData.toggleStatus ? "done" : "incomplete",
-            }
-          : e
-      );
-    } else {
-      const newEvent = {
-        ...formData,
-        id: String(Date.now()),
-        start: formData.dateRange?.[0],
-        end: formData.dateRange?.[1],
-        statusID: "created",
-      };
-      return [...prev, newEvent];
-    }
-  });
-};
+      if (isExisting) {
+        return prev.map((e) =>
+          String(e.id) === String(formData.id)
+            ? {
+                ...e,
+                ...formData,
+                start: formData.dateRange?.[0],
+                end: formData.dateRange?.[1],
+                statusID: formData.toggleStatus ? "done" : "incomplete",
+              }
+            : e,
+        );
+      } else {
+        const newEvent = {
+          ...formData,
+          id: String(Date.now()),
+          start: formData.dateRange?.[0],
+          end: formData.dateRange?.[1],
+          statusID: "created",
+        };
+        return [...prev, newEvent];
+      }
+    });
+  };
 
   const handleSelectEvent = (eventData) => {
     if (!eventData) {
@@ -143,6 +147,26 @@ const App = () => {
     );
   };
 
+  const handleMoveToTrash = (id) => {
+    setEvents((prev) =>
+      prev.map((event) =>
+        event.id === String(id) ? { ...event, statusID: "deleted" } : event,
+      ),
+    );
+  };
+
+  const handleRestore = (id) => {
+    setEvents((prev) =>
+      prev.map((event) =>
+        event.id === String(id) ? { ...event, statusID: "incomplete" } : event,
+      ),
+    );
+  };
+
+  const handlePermanentDelete = (id) => {
+    setEvents((prev) => prev.filter((event) => event.id !== String(id)));
+  };
+
   return (
     <ConfigProvider locale={locale}>
       <Layout style={{ height: "100vh", overflow: "hidden" }}>
@@ -179,7 +203,11 @@ const App = () => {
               >
                 <Menu.Item
                   key="0"
-                  style={{ fontWeight: "bold", textAlign: "center", padding: "0px" }}
+                  style={{
+                    fontWeight: "bold",
+                    textAlign: "center",
+                    padding: "0px",
+                  }}
                 >
                   <Link to="/">PODODO</Link>
                 </Menu.Item>
@@ -423,10 +451,21 @@ const App = () => {
                       path="/"
                       element={
                         <FullCalendar
-                          events={events}
-                          onDelete={handleDeleteEvent}
+                          events={events.filter((e) => e.statusID !== "deleted")}
+                          onDelete={handleMoveToTrash}
                           onSelectEvent={handleSelectEvent}
                           onEventDrop={handleEventDrop}
+                        />
+                      }
+                    />
+                    <Route path="/user" element={<LoginPage />} />
+                    <Route
+                      path="/rubbish"
+                      element={
+                        <DeleteList
+                          events={events}
+                          onRestore={handleRestore}
+                          onPermanentDelete={handlePermanentDelete}
                         />
                       }
                     />

@@ -4,7 +4,19 @@ import { statusColors } from "../TestData/TestData";
 
 export const useCalendarData = (events) => {
   return useMemo(() => {
+    // const activeEvents = events.filter((event) => event.statusID !== "deleted");
     const today = dayjs().format("YYYY-MM-DD");
+
+    // const dailyList = activeEvents.filter((event) => {
+    //   const eventDate = dayjs(event.start).format("YYYY-MM-DD");
+    //   return eventDate === today;
+    // });
+    
+    // const statusCount = activeEvents.reduce((acc, event) => {
+    //   const statusKey = event.status || "미생성";
+    //   acc[statusKey] = (acc[statusKey] || 0) + 1;
+    //   return acc;
+    // });
 
     const dailyList = events.filter((event) => event.date === today);
 
@@ -14,10 +26,11 @@ export const useCalendarData = (events) => {
       return acc;
     }, {});
 
+
     const rawStatusData = Object.entries(statusCount).map(([key, value]) => ({
       id: key,
       value,
-      color: statusColors[key] || "#ddd",
+      color: statusColors[key] || "#4ECDC4",
     }));
 
     const donutData = rawStatusData.filter((d) => d.id !== "미생성");
