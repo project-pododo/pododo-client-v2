@@ -1,24 +1,31 @@
 import React, { useState } from "react";
-import { List, Input, Button, Tag, Empty, Pagination, Typography } from "antd";
+import {
+  List,
+  Input,
+  Button,
+  Tag,
+  Empty,
+  Pagination,
+  Typography,
+  Checkbox,
+} from "antd";
 import {
   SearchOutlined,
-  UndoOutlined,
-  DeleteOutlined,
+  CheckCircleOutlined,
+  RollbackOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 
 const { Text } = Typography;
 
-const RubbishList = ({ events, onRestore, onPermanentDelete }) => {
+const DoneList = ({ events, onToggleStatus }) => {
   const [searchText, setSearchText] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 8;
 
-  const rubbishData = events.filter(
-    (e) => e.statusID === "deleted" || e.isDeleted,
-  );
+  const doneData = events.filter((e) => e.statusID === "done");
 
-  const filteredData = rubbishData.filter((item) =>
+  const filteredData = doneData.filter((item) =>
     item.title.toLowerCase().includes(searchText.toLowerCase()),
   );
 
@@ -44,11 +51,11 @@ const RubbishList = ({ events, onRestore, onPermanentDelete }) => {
           alignItems: "center",
         }}
       >
-        <Typography.Title level={4} style={{ margin: 0, color: "#722ed1" }}>
-          휴지통 <DeleteOutlined />
+        <Typography.Title level={4} style={{ margin: 0, color: "#52c41a" }}>
+          완료된 일정 <CheckCircleOutlined />
         </Typography.Title>
         <Input
-          placeholder="삭제된 일정 검색..."
+          placeholder="완료된 일정 검색..."
           prefix={<SearchOutlined style={{ color: "#bfbfbf" }} />}
           style={{ width: 250, borderRadius: "8px" }}
           allowClear
@@ -63,7 +70,7 @@ const RubbishList = ({ events, onRestore, onPermanentDelete }) => {
           locale={{
             emptyText: (
               <Empty
-                description="휴지통이 비어있습니다."
+                description="완료된 일정이 없습니다."
                 style={{ marginTop: 100 }}
               />
             ),
@@ -73,50 +80,50 @@ const RubbishList = ({ events, onRestore, onPermanentDelete }) => {
               <div
                 style={{
                   padding: "16px",
-                  backgroundColor: "#fdfdfd",
-                  border: "1px solid #f0f0f0",
+                  backgroundColor: "#f6ffed",
+                  border: "1px solid #b7eb8f",
                   borderRadius: "12px",
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
-                  transition: "all 0.3s",
                 }}
-                className="list-item-hover"
               >
                 <div>
                   <div style={{ marginBottom: 4 }}>
-                    <Text strong style={{ fontSize: "16px" }}>
+                    <Checkbox
+                      checked={true}
+                      onChange={() => onToggleStatus(item.id)}
+                      style={{ marginRight: 10 }}
+                    />
+                    <Text
+                      delete
+                      strong
+                      style={{ fontSize: "16px", color: "#555" }}
+                    >
                       {item.title}
                     </Text>
                     <Tag
-                      color="default"
+                      color="green"
                       style={{ marginLeft: 8, borderRadius: "4px" }}
                     >
                       {dayjs(item.start).format("YYYY-MM-DD")}
                     </Tag>
                   </div>
-                  <Text type="secondary" style={{ fontSize: "13px" }}>
+                  <Text
+                    type="secondary"
+                    style={{ fontSize: "13px", marginLeft: 28 }}
+                  >
                     {item.content || "상세 설명이 없습니다."}
                   </Text>
                 </div>
 
-                <div style={{ display: "flex", gap: "8px" }}>
-                  <Button
-                    icon={<UndoOutlined />}
-                    onClick={() => onRestore(item.id)}
-                    style={{ borderRadius: "6px" }}
-                  >
-                    복원
-                  </Button>
-                  <Button
-                    danger
-                    type="text"
-                    icon={<DeleteOutlined />}
-                    onClick={() => onPermanentDelete(item.id)}
-                  >
-                    영구 삭제
-                  </Button>
-                </div>
+                <Button
+                  icon={<RollbackOutlined />}
+                  onClick={() => onToggleStatus(item.id)}
+                  style={{ borderRadius: "6px" }}
+                >
+                  되돌리기
+                </Button>
               </div>
             </List.Item>
           )}
@@ -136,4 +143,4 @@ const RubbishList = ({ events, onRestore, onPermanentDelete }) => {
   );
 };
 
-export default RubbishList;
+export default DoneList;

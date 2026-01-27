@@ -21,10 +21,14 @@ import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 import locale from "antd/es/date-picker/locale/ko_KR";
 
+import "./css/GlobalTheme.css";
+import styles from "./css/App.module.css";
+
 import FullCalendar from "./component/FullCalendar/page";
 import TodoForm from "./component/TodoForm/page";
 import LoginPage from "./component/LoginForm/page";
 import DeleteList from "./component/DeleteList/page";
+import CompletedList from "./component/CompletedList/page";
 
 import { ResponsivePie } from "@nivo/pie";
 import { ResponsiveWaffle } from "@nivo/waffle";
@@ -49,10 +53,8 @@ const App = () => {
   const { isSideVisible, setIsSideVisible } = useCalendar();
   const { dailyList, donutData, waffleData } = useCalendarData(events);
 
-  const handleDeleteEvent = (id) => {
+  const handleDeleteEvent = (id) =>
     setEvents((prev) => prev.filter((event) => event.id !== String(id)));
-  };
-
   const handleToggleStatus = (id) => {
     setEvents((prev) =>
       prev.map((event) =>
@@ -80,11 +82,9 @@ const App = () => {
 
   const handleSaveEvent = (formData) => {
     if (!formData.title) return;
-
     setEvents((prev) => {
       const isExisting =
         formData.id && prev.some((e) => String(e.id) === String(formData.id));
-
       if (isExisting) {
         return prev.map((e) =>
           String(e.id) === String(formData.id)
@@ -98,14 +98,16 @@ const App = () => {
             : e,
         );
       } else {
-        const newEvent = {
-          ...formData,
-          id: String(Date.now()),
-          start: formData.dateRange?.[0],
-          end: formData.dateRange?.[1],
-          statusID: "created",
-        };
-        return [...prev, newEvent];
+        return [
+          ...prev,
+          {
+            ...formData,
+            id: String(Date.now()),
+            start: formData.dateRange?.[0],
+            end: formData.dateRange?.[1],
+            statusID: "created",
+          },
+        ];
       }
     });
   };
@@ -115,7 +117,6 @@ const App = () => {
       setSelectedEvent(null);
       return;
     }
-
     const target = events.find((e) => e.id === String(eventData.id));
     if (target) setSelectedEvent(target);
   };
@@ -137,7 +138,6 @@ const App = () => {
       ],
       ...event.extendedProps,
     };
-
     setEvents((prev) =>
       prev.map((e) =>
         String(e.id) === String(updatedEvent.id)
@@ -147,50 +147,37 @@ const App = () => {
     );
   };
 
-  const handleMoveToTrash = (id) => {
+  const handleMoveToTrash = (id) =>
     setEvents((prev) =>
       prev.map((event) =>
         event.id === String(id) ? { ...event, statusID: "deleted" } : event,
       ),
     );
-  };
-
-  const handleRestore = (id) => {
+  const handleRestore = (id) =>
     setEvents((prev) =>
       prev.map((event) =>
         event.id === String(id) ? { ...event, statusID: "incomplete" } : event,
       ),
     );
-  };
-
-  const handlePermanentDelete = (id) => {
+  const handlePermanentDelete = (id) =>
     setEvents((prev) => prev.filter((event) => event.id !== String(id)));
-  };
 
   return (
     <ConfigProvider locale={locale}>
-      <Layout style={{ height: "100vh", overflow: "hidden" }}>
-        <Layout>
+      <Layout className={styles.mainLayout}>
+        <Layout className={styles.horizontalLayout}>
           <Sider
             collapsed={true}
             collapsedWidth={80}
             width={80}
-            style={{ backgroundColor: "#F4E6F1" }}
+            className={styles.sider}
           >
-            <div
-              style={{
-                height: "100vh",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                backgroundColor: "#F4E6F1",
-              }}
-            >
+            <div className={styles.siderWrapper}>
               <Menu
                 mode="inline"
                 selectedKeys={[selectedKey]}
                 inlineCollapsed={true}
-                style={{ backgroundColor: "transparent", border: "none" }}
+                className={styles.transparentMenu}
                 onSelect={({ key }) => {
                   const routes = {
                     1: "/user",
@@ -201,62 +188,39 @@ const App = () => {
                   if (routes[key]) navigate(routes[key]);
                 }}
               >
-                <Menu.Item
-                  key="0"
-                  style={{
-                    fontWeight: "bold",
-                    textAlign: "center",
-                    padding: "0px",
-                  }}
-                >
+                <Menu.Item key="0" className={styles.logoText}>
                   <Link to="/">PODODO</Link>
                 </Menu.Item>
                 <Menu.Item
                   key="1"
                   icon={<UserOutlined />}
-                  style={{
-                    backgroundColor:
-                      selectedKey === "1" ? "#D1A7E1" : "transparent",
-                  }}
+                  className={selectedKey === "1" ? "active-menu" : ""}
                 >
                   USER
                 </Menu.Item>
                 <Menu.Item
                   key="2"
                   icon={<CalendarOutlined />}
-                  style={{
-                    backgroundColor:
-                      selectedKey === "2" ? "#D1A7E1" : "transparent",
-                  }}
+                  className={selectedKey === "2" ? "active-menu" : ""}
                 >
                   CALENDAR
                 </Menu.Item>
                 <Menu.Item
                   key="3"
                   icon={<UnorderedListOutlined />}
-                  style={{
-                    backgroundColor:
-                      selectedKey === "3" ? "#D1A7E1" : "transparent",
-                  }}
+                  className={selectedKey === "3" ? "active-menu" : ""}
                 >
                   DONE
                 </Menu.Item>
                 <Menu.Item
                   key="4"
                   icon={<DeleteOutlined />}
-                  style={{
-                    color: "red",
-                    backgroundColor:
-                      selectedKey === "4" ? "#D1A7E1" : "transparent",
-                  }}
+                  className={selectedKey === "4" ? "active-menu" : ""}
                 >
                   TRASH
                 </Menu.Item>
               </Menu>
-              <Menu
-                mode="inline"
-                style={{ backgroundColor: "transparent", border: "none" }}
-              >
+              <Menu mode="inline" className={styles.transparentMenu}>
                 <Menu.Item
                   key="5"
                   icon={
@@ -273,40 +237,12 @@ const App = () => {
             </div>
           </Sider>
 
-          <Layout
-            style={{
-              flexDirection: "row",
-              overflow: "hidden",
-              backgroundColor: "#fff5fb",
-            }}
-          >
-            <Layout
-              style={{
-                width: "20%",
-                backgroundColor: "#fff5fb",
-                borderRight: "1px solid #ddd",
-              }}
-            >
-              <Content style={{ padding: "16px" }}>
-                <div
-                  style={{
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "8px",
-                  }}
-                >
-                  <div
-                    style={{
-                      flex: 1,
-                      backgroundColor: "#fefefe",
-                      padding: "8px",
-                      borderRadius: "8px",
-                      height: "25%",
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
+          <Layout className={styles.bodyLayout}>
+            {/* 왼쪽 섹션 */}
+            <Layout className={styles.leftSection}>
+              <Content className={styles.contentPadding}>
+                <div className={styles.leftColumnWrapper}>
+                  <div className={`${styles.whiteCard} ${styles.chartCard}`}>
                     <h4 style={{ margin: "0 0 8px" }}>
                       {dayjs().format("YYYY-MM-DD")}
                     </h4>
@@ -333,95 +269,26 @@ const App = () => {
                       )}
                     />
                   </div>
-                  <div
-                    style={{
-                      flex: 1,
-                      backgroundColor: "#fefefe",
-                      padding: "8px",
-                      borderRadius: "8px",
-                      height: "25%",
-                      display: "flex",
-                      flexDirection: "column",
-                      overflow: "hidden",
-                    }}
-                  >
-                    <h4 style={{ margin: "0 0 8px" }}>Donut Chart</h4>
-                    <div
-                      style={{
-                        flex: 1,
-                        minHeight: 0,
-                        position: "relative",
-                      }}
-                    >
+                  <div className={`${styles.whiteCard} ${styles.chartCard}`}>
+                    <h4 style={{ margin: "0 0 8px" }}>Donut</h4>
+                    <div className={styles.chartContainer}>
                       <ResponsivePie
                         data={donutData}
                         innerRadius={0.5}
                         colors={{ datum: "data.color" }}
                         enableArcLinkLabels={false}
-                        arcLinkLabelsSkipAngle={10}
                       />
                     </div>
                   </div>
-                  <div
-                    style={{
-                      flex: 1,
-                      backgroundColor: "#fefefe",
-                      padding: "8px",
-                      borderRadius: "8px",
-                      height: "25%",
-                      display: "flex",
-                      flexDirection: "column",
-                      overflow: "hidden",
-                    }}
-                  >
-                    <h4 style={{ margin: "0 0 8px" }}>Waffle Chart</h4>
-                    <div
-                      style={{ flex: 1, minHeight: 0, position: "relative" }}
-                    >
+                  <div className={`${styles.whiteCard} ${styles.chartCard}`}>
+                    <h4 style={{ margin: "0 0 8px" }}>Waffle</h4>
+                    <div className={styles.chartContainer}>
                       <ResponsiveWaffle
                         data={waffleData}
                         total={100}
                         rows={10}
                         columns={10}
                         colors={(d) => d.color}
-                        tooltip={(node) => {
-                          if (!node || !node.data) return null;
-
-                          const { id, value, color } = node.data;
-
-                          return (
-                            <div
-                              style={{
-                                padding: "6px 10px",
-                                background: "#fff",
-                                border: "1px solid #ddd",
-                                borderRadius: "4px",
-                                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-                                display: "flex",
-                                alignItems: "center",
-                                gap: "8px",
-                                color: "#333",
-                                zIndex: 9999,
-                                whiteSpace: "nowrap",
-                                minWidth: "max-content",
-                              }}
-                            >
-                              <div
-                                style={{
-                                  width: 14,
-                                  height: 14,
-                                  backgroundColor: color,
-                                  borderRadius: "2px",
-                                  flexShrink: 0,
-                                }}
-                              />
-                              <span>{id}:</span>
-                              <span style={{ fontWeight: "bold" }}>
-                                {value}
-                              </span>
-                            </div>
-                          );
-                        }}
                       />
                     </div>
                   </div>
@@ -429,29 +296,20 @@ const App = () => {
               </Content>
             </Layout>
 
+            {/* 중앙 섹션 */}
             <Layout
-              style={{
-                width: isSideVisible ? "60%" : "80%",
-                transition: "width 0.3s",
-                backgroundColor: "#fff5fb",
-                position: "relative",
-              }}
+              className={`${styles.middleSection} ${isSideVisible ? styles.middleNarrow : styles.middleWide}`}
             >
-              <Content style={{ padding: "16px" }}>
-                <div
-                  style={{
-                    height: "100%",
-                    backgroundColor: "#ffffff",
-                    borderRadius: "8px",
-                    padding: "16px",
-                  }}
-                >
+              <Content className={styles.contentPadding}>
+                <div className={styles.fullHeight}>
                   <Routes>
                     <Route
                       path="/"
                       element={
                         <FullCalendar
-                          events={events.filter((e) => e.statusID !== "deleted")}
+                          events={events.filter(
+                            (e) => e.statusID !== "deleted",
+                          )}
                           onDelete={handleMoveToTrash}
                           onSelectEvent={handleSelectEvent}
                           onEventDrop={handleEventDrop}
@@ -459,6 +317,15 @@ const App = () => {
                       }
                     />
                     <Route path="/user" element={<LoginPage />} />
+                    <Route
+                      path="/completed"
+                      element={
+                        <CompletedList
+                          events={events}
+                          onToggleStatus={handleToggleStatus}
+                        />
+                      }
+                    />
                     <Route
                       path="/rubbish"
                       element={
@@ -472,21 +339,8 @@ const App = () => {
                   </Routes>
                 </div>
               </Content>
-
               <div
-                style={{
-                  position: "absolute",
-                  top: "50%",
-                  right: "-10px",
-                  transform: "translateY(-50%)",
-                  backgroundColor: "#D1A7E1",
-                  color: "white",
-                  padding: "4px 6px",
-                  borderRadius: "6px 0 0 6px",
-                  cursor: "pointer",
-                  zIndex: 1000,
-                  fontSize: "20px",
-                }}
+                className={styles.sideToggleButton}
                 onClick={() => {
                   setIsSideVisible(!isSideVisible);
                   setTimeout(
@@ -503,23 +357,12 @@ const App = () => {
               </div>
             </Layout>
 
+            {/* 우측 섹션 */}
             <Layout
-              style={{
-                width: isSideVisible ? "20%" : "0",
-                transition: "width 0.3s",
-                backgroundColor: "#fff5fb",
-                borderLeft: isSideVisible ? "1px solid #ddd" : "none",
-                overflow: "hidden",
-              }}
+              className={`${styles.rightSection} ${isSideVisible ? styles.rightOpen : styles.rightClosed}`}
             >
-              <Content style={{ padding: "16px" }}>
-                <div
-                  style={{
-                    height: "100%",
-                    backgroundColor: "#ffffff",
-                    borderRadius: "8px",
-                  }}
-                >
+              <Content className={styles.contentPadding}>
+                <div className={styles.fullHeight}>
                   <TodoForm
                     key={selectedEvent?.id || "new-event"}
                     initialData={selectedEvent}

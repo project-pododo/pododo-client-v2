@@ -1,0 +1,42 @@
+/* src/css/GlobalTheme.css */
+:root {
+  --primary-purple: #6a0dad;
+  --light-purple: #f4e6f1;
+  --soft-purple: #D1A7E1;
+  --bg-pink: #fff5fb;
+  --text-gray: #888;
+}
+
+.ant-btn-primary {
+  background: var(--primary-purple) !important;
+  border-color: var(--primary-purple) !important;
+}
+
+.ant-picker { width: 100% !important; max-width: 350px; }
+
+.fc { font-family: 'Segoe UI', sans-serif; }
+.fc .fc-daygrid-day-number { color: #7e57c2; font-weight: bold; }
+.fc .fc-event {
+  background-color: #ba68c8;
+  border: none;
+  padding: 2px 5px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.page-container {
+  padding: 10px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.list-card-item {
+  padding: 16px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  transition: all 0.2s;
+}
