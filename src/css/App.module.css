@@ -133,3 +133,29 @@
   z-index: 1000;
   font-size: 20px;
 }
+
+.chartTooltip {
+  padding: 6px 10px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #333;
+  z-index: 9999;
+  white-space: nowrap;
+  min-width: max-content;
+}
+
+.tooltipColorBox {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.tooltipValue {
+  font-weight: bold;
+}

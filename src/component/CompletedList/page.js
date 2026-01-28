@@ -15,8 +15,9 @@ import {
   RollbackOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
+import styles from "../../css/CompletedList.module.css";
 
-const { Text } = Typography;
+const { Text, Title } = Typography;
 
 const DoneList = ({ events, onToggleStatus }) => {
   const [searchText, setSearchText] = useState("");
@@ -35,35 +36,21 @@ const DoneList = ({ events, onToggleStatus }) => {
   );
 
   return (
-    <div
-      style={{
-        padding: "10px",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <div
-        style={{
-          marginBottom: 20,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <Typography.Title level={4} style={{ margin: 0, color: "#52c41a" }}>
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <Title level={4} className={styles.title}>
           완료된 일정 <CheckCircleOutlined />
-        </Typography.Title>
+        </Title>
         <Input
           placeholder="완료된 일정 검색..."
-          prefix={<SearchOutlined style={{ color: "#bfbfbf" }} />}
-          style={{ width: 250, borderRadius: "8px" }}
+          prefix={<SearchOutlined className={styles.searchIcon} />}
+          className={styles.searchInput}
           allowClear
           onChange={(e) => setSearchText(e.target.value)}
         />
       </div>
 
-      <div style={{ flex: 1 }}>
+      <div className={styles.listWrapper}>
         <List
           grid={{ gutter: 16, column: 1 }}
           dataSource={paginatedData}
@@ -71,48 +58,28 @@ const DoneList = ({ events, onToggleStatus }) => {
             emptyText: (
               <Empty
                 description="완료된 일정이 없습니다."
-                style={{ marginTop: 100 }}
+                className={styles.emptyState}
               />
             ),
           }}
           renderItem={(item) => (
             <List.Item>
-              <div
-                style={{
-                  padding: "16px",
-                  backgroundColor: "#f6ffed",
-                  border: "1px solid #b7eb8f",
-                  borderRadius: "12px",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <div>
-                  <div style={{ marginBottom: 4 }}>
+              <div className={styles.itemCard}>
+                <div className={styles.itemInfo}>
+                  <div className={styles.itemHeader}>
                     <Checkbox
                       checked={true}
                       onChange={() => onToggleStatus(item.id)}
-                      style={{ marginRight: 10 }}
+                      className={styles.checkbox}
                     />
-                    <Text
-                      delete
-                      strong
-                      style={{ fontSize: "16px", color: "#555" }}
-                    >
+                    <Text delete strong className={styles.itemTitle}>
                       {item.title}
                     </Text>
-                    <Tag
-                      color="green"
-                      style={{ marginLeft: 8, borderRadius: "4px" }}
-                    >
+                    <Tag color="green" className={styles.dateTag}>
                       {dayjs(item.start).format("YYYY-MM-DD")}
                     </Tag>
                   </div>
-                  <Text
-                    type="secondary"
-                    style={{ fontSize: "13px", marginLeft: 28 }}
-                  >
+                  <Text type="secondary" className={styles.itemDescription}>
                     {item.content || "상세 설명이 없습니다."}
                   </Text>
                 </div>
@@ -120,7 +87,7 @@ const DoneList = ({ events, onToggleStatus }) => {
                 <Button
                   icon={<RollbackOutlined />}
                   onClick={() => onToggleStatus(item.id)}
-                  style={{ borderRadius: "6px" }}
+                  className={styles.rollbackButton}
                 >
                   되돌리기
                 </Button>
@@ -130,7 +97,7 @@ const DoneList = ({ events, onToggleStatus }) => {
         />
       </div>
 
-      <div style={{ textAlign: "center", marginTop: 16 }}>
+      <div className={styles.paginationWrapper}>
         <Pagination
           current={currentPage}
           total={filteredData.length}

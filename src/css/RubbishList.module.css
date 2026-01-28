@@ -1,0 +1,84 @@
+/* RubbishList.module.css */
+.container {
+  padding: 10px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  margin: 0 !important;
+  color: #722ed1 !important;
+}
+
+.searchInput {
+  width: 250px !important;
+  border-radius: 8px;
+}
+
+.searchIcon {
+  color: #bfbfbf;
+}
+
+.listWrapper {
+  flex: 1;
+}
+
+.emptyState {
+  margin-top: 100px;
+}
+
+.itemCard {
+  padding: 16px;
+  background-color: #fdfdfd;
+  border: 1px solid #f0f0f0;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s;
+}
+
+.itemCard:hover {
+  background-color: #fafafa;
+  border-color: #d9d9d9;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.itemHeader {
+  margin-bottom: 4px;
+}
+
+.itemTitle {
+  font-size: 16px;
+}
+
+.dateTag {
+  margin-left: 8px;
+  border-radius: 4px;
+}
+
+.itemDescription {
+  font-size: 13px;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 8px;
+}
+
+.actionButton {
+  border-radius: 6px;
+}
+
+.paginationWrapper {
+  text-align: center;
+  margin-top: 16px;
+}

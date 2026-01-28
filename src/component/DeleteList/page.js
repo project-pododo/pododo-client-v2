@@ -6,8 +6,9 @@ import {
   DeleteOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
+import styles from "../../css/RubbishList.module.css";
 
-const { Text } = Typography;
+const { Text, Title } = Typography;
 
 const RubbishList = ({ events, onRestore, onPermanentDelete }) => {
   const [searchText, setSearchText] = useState("");
@@ -28,35 +29,24 @@ const RubbishList = ({ events, onRestore, onPermanentDelete }) => {
   );
 
   return (
-    <div
-      style={{
-        padding: "10px",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <div
-        style={{
-          marginBottom: 20,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <Typography.Title level={4} style={{ margin: 0, color: "#722ed1" }}>
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <Title level={4} className={styles.title}>
           휴지통 <DeleteOutlined />
-        </Typography.Title>
+        </Title>
         <Input
           placeholder="삭제된 일정 검색..."
-          prefix={<SearchOutlined style={{ color: "#bfbfbf" }} />}
-          style={{ width: 250, borderRadius: "8px" }}
+          prefix={<SearchOutlined className={styles.searchIcon} />}
+          className={styles.searchInput}
           allowClear
-          onChange={(e) => setSearchText(e.target.value)}
+          onChange={(e) => {
+            setSearchText(e.target.value);
+            setCurrentPage(1);
+          }}
         />
       </div>
 
-      <div style={{ flex: 1 }}>
+      <div className={styles.listWrapper}>
         <List
           grid={{ gutter: 16, column: 1 }}
           dataSource={paginatedData}
@@ -64,47 +54,32 @@ const RubbishList = ({ events, onRestore, onPermanentDelete }) => {
             emptyText: (
               <Empty
                 description="휴지통이 비어있습니다."
-                style={{ marginTop: 100 }}
+                className={styles.emptyState}
               />
             ),
           }}
           renderItem={(item) => (
             <List.Item>
-              <div
-                style={{
-                  padding: "16px",
-                  backgroundColor: "#fdfdfd",
-                  border: "1px solid #f0f0f0",
-                  borderRadius: "12px",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  transition: "all 0.3s",
-                }}
-                className="list-item-hover"
-              >
+              <div className={styles.itemCard}>
                 <div>
-                  <div style={{ marginBottom: 4 }}>
-                    <Text strong style={{ fontSize: "16px" }}>
+                  <div className={styles.itemHeader}>
+                    <Text strong className={styles.itemTitle}>
                       {item.title}
                     </Text>
-                    <Tag
-                      color="default"
-                      style={{ marginLeft: 8, borderRadius: "4px" }}
-                    >
+                    <Tag color="default" className={styles.dateTag}>
                       {dayjs(item.start).format("YYYY-MM-DD")}
                     </Tag>
                   </div>
-                  <Text type="secondary" style={{ fontSize: "13px" }}>
+                  <Text type="secondary" className={styles.itemDescription}>
                     {item.content || "상세 설명이 없습니다."}
                   </Text>
                 </div>
 
-                <div style={{ display: "flex", gap: "8px" }}>
+                <div className={styles.buttonGroup}>
                   <Button
                     icon={<UndoOutlined />}
                     onClick={() => onRestore(item.id)}
-                    style={{ borderRadius: "6px" }}
+                    className={styles.actionButton}
                   >
                     복원
                   </Button>
@@ -123,7 +98,7 @@ const RubbishList = ({ events, onRestore, onPermanentDelete }) => {
         />
       </div>
 
-      <div style={{ textAlign: "center", marginTop: 16 }}>
+      <div className={styles.paginationWrapper}>
         <Pagination
           current={currentPage}
           total={filteredData.length}

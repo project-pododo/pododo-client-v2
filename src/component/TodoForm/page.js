@@ -12,6 +12,7 @@ import {
 import { MoreOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { useCalendar } from "../../context/CalendarContext";
+import styles from "../../css/TodoForm.module.css";
 
 const { RangePicker } = DatePicker;
 
@@ -27,9 +28,10 @@ const FormPage = ({ initialData, onSubmit, onDelete }) => {
 
       form.setFieldsValue({
         ...initialData,
-        dateRange: startDate && endDate 
-        ? [dayjs(startDate), dayjs(endDate)] 
-        : [null, null],
+        dateRange:
+          startDate && endDate
+            ? [dayjs(startDate), dayjs(endDate)]
+            : [null, null],
       });
       setIsToggleOn(initialData.statusID === "done");
     } else {
@@ -88,40 +90,33 @@ const FormPage = ({ initialData, onSubmit, onDelete }) => {
   );
 
   return (
-    <div
-      style={{ padding: 16, backgroundColor: "#F0DAFF", minHeight: "100vh" }}
-      onMouseLeave={handleProcessSave}
-    >
-      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+    <div className={styles.formContainer} onMouseLeave={handleProcessSave}>
+      <div className={styles.header}>
         <Dropdown overlay={menu} trigger={["click"]}>
           <Button
             icon={<MoreOutlined />}
             type="text"
-            style={{ fontSize: "18px" }}
+            className={styles.moreButton}
           />
         </Dropdown>
       </div>
 
-      <Form layout="vertical" form={form} initialValues={{ type: "Atype" }} >
+      <Form layout="vertical" form={form} initialValues={{ type: "Atype" }}>
         <Form.Item name="title" rules={[{ required: true }]}>
           <Input placeholder="제목" />
         </Form.Item>
 
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            marginBottom: 24,
-          }}
-        >
+        <div className={styles.dateRangeWrapper}>
           <img
             src="/images/Clock.svg"
             alt="날짜"
-            style={{ width: 20, height: 20 }}
+            className={styles.clockIcon}
           />
           <Form.Item name="dateRange" noStyle>
-            <RangePicker style={{ flex: 1 }} getPopupContainer={(trigger) => trigger.parentElement}/>
+            <RangePicker
+              className={styles.rangePicker}
+              getPopupContainer={(trigger) => trigger.parentElement}
+            />
           </Form.Item>
         </div>
 
@@ -158,11 +153,7 @@ const FormPage = ({ initialData, onSubmit, onDelete }) => {
         </Form.Item>
 
         <Form.Item>
-          <Button
-            type="primary"
-            block
-            style={{ borderRadius: "20px", marginTop: 10 }}
-          >
+          <Button type="primary" block className={styles.focusButton}>
             집중모드
           </Button>
         </Form.Item>

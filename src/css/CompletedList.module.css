@@ -1,0 +1,85 @@
+/* CompletedList.module.css */
+.container {
+  padding: 10px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  margin: 0 !important;
+  color: #52c41a !important;
+}
+
+.searchInput {
+  width: 250px !important;
+  border-radius: 8px;
+}
+
+.searchIcon {
+  color: #bfbfbf;
+}
+
+.listWrapper {
+  flex: 1;
+}
+
+.emptyState {
+  margin-top: 100px;
+}
+
+.itemCard {
+  padding: 16px;
+  background-color: #f6ffed;
+  border: 1px solid #b7eb8f;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.itemInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.itemHeader {
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.checkbox {
+  margin-right: 10px;
+}
+
+.itemTitle {
+  font-size: 16px;
+  color: #555;
+}
+
+.dateTag {
+  margin-left: 8px;
+  border-radius: 4px;
+}
+
+.itemDescription {
+  font-size: 13px;
+  margin-left: 28px;
+}
+
+.rollbackButton {
+  border-radius: 6px;
+}
+
+.paginationWrapper {
+  text-align: center;
+  margin-top: 16px;
+}

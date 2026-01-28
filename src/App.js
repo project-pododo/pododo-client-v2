@@ -289,6 +289,22 @@ const App = () => {
                         rows={10}
                         columns={10}
                         colors={(d) => d.color}
+                        tooltip={(node) => {
+                          if (!node.data) return null;
+                          const { id, value, color } = node.data;
+                          return (
+                            <div className={styles.chartTooltip}>
+                              <div
+                                className={styles.tooltipColorBox}
+                                style={{ backgroundColor: color }}
+                              />
+                              <span>{id}:</span>
+                              <span className={styles.tooltipValue}>
+                                {value}
+                              </span>
+                            </div>
+                          );
+                        }}
                       />
                     </div>
                   </div>

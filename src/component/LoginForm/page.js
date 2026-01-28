@@ -1,6 +1,7 @@
 import React from "react";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { Divider, Card } from "antd";
+import styles from "../../css/LoginPage.module.css";
 
 const LoginPage = () => {
   const clientId = "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"; // 실제 연동을 위한 구글 클라이언트 ID 교체 필요
@@ -16,25 +17,21 @@ const LoginPage = () => {
   // 백엔드 토큰 연동 작업 추가 필요.
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100%",
-        backgroundColor: "#f5f5f5",
-      }}
-    >
-      <Card style={{ width: 350, textAlign: "center", borderRadius: 12 }}>
-        <h2>
+    <div className={styles.loginContainer}>
+      <Card className={styles.loginCard}>
+        <h2 className={styles.title}>
           서비스 시작하기
-          <img src="/images/icon-grapes.png" alt="logo" style={{ width: 30 }} />
+          <img
+            src="/images/icon-grapes.png"
+            alt="logo"
+            className={styles.logoImage}
+          />
         </h2>
-        <p style={{ color: "#888" }}>나만의 캘린더를 관리해 보세요</p>
+        <p className={styles.subtitle}>나만의 캘린더를 관리해 보세요</p>
 
         <Divider />
 
-        <div style={{ display: "flex", justifyContent: "center" }}>
+        <div className={styles.googleWrapper}>
           <GoogleOAuthProvider clientId={clientId}>
             <GoogleLogin
               onSuccess={onSuccess}
@@ -46,12 +43,12 @@ const LoginPage = () => {
           </GoogleOAuthProvider>
         </div>
 
-        <Divider plain style={{ fontSize: "12px", color: "#ccc" }}>
+        <Divider plain className={styles.emailDivider}>
           또는 이메일로 로그인
         </Divider>
 
         <p
-          style={{ fontSize: "13px", cursor: "pointer", color: "#1890ff" }}
+          className={styles.signupLink}
           onClick={() => alert("준비 중인 서비스입니다.")}
         >
           계정이 없으신가요? 가입하기

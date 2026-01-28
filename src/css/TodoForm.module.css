@@ -1,0 +1,39 @@
+/* TodoForm.module.css */
+.formContainer {
+  padding: 16px;
+  background-color: #F0DAFF;
+  height: 100% !important;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.moreButton {
+  font-size: 18px !important;
+}
+
+.dateRangeWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.clockIcon {
+  width: 20px;
+  height: 20px;
+}
+
+.rangePicker {
+  flex: 1;
+}
+
+.focusButton {
+  border-radius: 20px !important;
+  margin-top: 10px;
+}

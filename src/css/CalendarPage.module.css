@@ -1,0 +1,28 @@
+/* CalendarPage.module.css */
+.calendarContainer {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  overflow: hidden;
+}
+
+.calendarContainer :global(.fc) {
+  height: 100% !important;
+  font-family: inherit;
+}
+
+.calendarContainer :global(.fc-toolbar-title) {
+  font-size: 1.2rem !important;
+  font-weight: bold;
+  color: #555;
+}
+
+.calendarContainer :global(.fc-button-primary) {
+  background-color: #D1A7E1 !important;
+  border-color: #D1A7E1 !important;
+  box-shadow: none !important;
+}
+
+.calendarContainer :global(.fc-button-primary:hover) {
+  background-color: #b388c5 !important;
+}
