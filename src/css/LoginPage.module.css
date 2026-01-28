@@ -1,0 +1,57 @@
+/* LoginPage.module.css */
+.loginContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  background-color: #f5f5f5; 
+  border-radius: 8px; 
+}
+
+.loginCard {
+  width: 350px;
+  text-align: center;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.title {
+  margin-top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.logoImage {
+  width: 30px;
+}
+
+.subtitle {
+  color: #888;
+  margin-bottom: 0;
+}
+
+.googleWrapper {
+  display: flex;
+  justify-content: center;
+  padding: 10px 0;
+}
+
+.emailDivider {
+  font-size: 12px;
+  color: #ccc;
+}
+
+.signupLink {
+  font-size: 13px;
+  cursor: pointer;
+  color: #1890ff;
+  margin-top: 16px;
+  transition: color 0.2s;
+}
+
+.signupLink:hover {
+  color: #40a9ff;
+  text-decoration: underline;
+}

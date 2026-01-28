@@ -1,25 +1,32 @@
 import React, { useState } from "react";
-import { List, Input, Button, Tag, Empty, Pagination, Typography } from "antd";
+import {
+  List,
+  Input,
+  Button,
+  Tag,
+  Empty,
+  Pagination,
+  Typography,
+  Checkbox,
+} from "antd";
 import {
   SearchOutlined,
-  UndoOutlined,
-  DeleteOutlined,
+  CheckCircleOutlined,
+  RollbackOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
-import styles from "../../css/RubbishList.module.css";
+import styles from "../../css/CompletedList.module.css";
 
 const { Text, Title } = Typography;
 
-const RubbishList = ({ events, onRestore, onPermanentDelete }) => {
+const DoneList = ({ events, onToggleStatus }) => {
   const [searchText, setSearchText] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 8;
 
-  const rubbishData = events.filter(
-    (e) => e.statusID === "deleted" || e.isDeleted,
-  );
+  const doneData = events.filter((e) => e.statusID === "done");
 
-  const filteredData = rubbishData.filter((item) =>
+  const filteredData = doneData.filter((item) =>
     item.title.toLowerCase().includes(searchText.toLowerCase()),
   );
 
@@ -32,17 +39,14 @@ const RubbishList = ({ events, onRestore, onPermanentDelete }) => {
     <div className={styles.container}>
       <div className={styles.header}>
         <Title level={4} className={styles.title}>
-          휴지통 <DeleteOutlined />
+          완료된 일정 <CheckCircleOutlined />
         </Title>
         <Input
-          placeholder="삭제된 일정 검색..."
+          placeholder="완료된 일정 검색..."
           prefix={<SearchOutlined className={styles.searchIcon} />}
           className={styles.searchInput}
           allowClear
-          onChange={(e) => {
-            setSearchText(e.target.value);
-            setCurrentPage(1);
-          }}
+          onChange={(e) => setSearchText(e.target.value)}
         />
       </div>
 
@@ -53,7 +57,7 @@ const RubbishList = ({ events, onRestore, onPermanentDelete }) => {
           locale={{
             emptyText: (
               <Empty
-                description="휴지통이 비어있습니다."
+                description="완료된 일정이 없습니다."
                 className={styles.emptyState}
               />
             ),
@@ -61,12 +65,17 @@ const RubbishList = ({ events, onRestore, onPermanentDelete }) => {
           renderItem={(item) => (
             <List.Item>
               <div className={styles.itemCard}>
-                <div>
+                <div className={styles.itemInfo}>
                   <div className={styles.itemHeader}>
-                    <Text strong className={styles.itemTitle}>
+                    <Checkbox
+                      checked={true}
+                      onChange={() => onToggleStatus(item.id)}
+                      className={styles.checkbox}
+                    />
+                    <Text delete strong className={styles.itemTitle}>
                       {item.title}
                     </Text>
-                    <Tag color="default" className={styles.dateTag}>
+                    <Tag color="green" className={styles.dateTag}>
                       {dayjs(item.start).format("YYYY-MM-DD")}
                     </Tag>
                   </div>
@@ -75,23 +84,13 @@ const RubbishList = ({ events, onRestore, onPermanentDelete }) => {
                   </Text>
                 </div>
 
-                <div className={styles.buttonGroup}>
-                  <Button
-                    icon={<UndoOutlined />}
-                    onClick={() => onRestore(item.id)}
-                    className={styles.actionButton}
-                  >
-                    복원
-                  </Button>
-                  <Button
-                    danger
-                    type="text"
-                    icon={<DeleteOutlined />}
-                    onClick={() => onPermanentDelete(item.id)}
-                  >
-                    영구 삭제
-                  </Button>
-                </div>
+                <Button
+                  icon={<RollbackOutlined />}
+                  onClick={() => onToggleStatus(item.id)}
+                  className={styles.rollbackButton}
+                >
+                  되돌리기
+                </Button>
               </div>
             </List.Item>
           )}
@@ -111,4 +110,4 @@ const RubbishList = ({ events, onRestore, onPermanentDelete }) => {
   );
 };
 
-export default RubbishList;
+export default DoneList;

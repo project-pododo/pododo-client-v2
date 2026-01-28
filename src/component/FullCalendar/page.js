@@ -4,7 +4,10 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import listPlugin from "@fullcalendar/list";
+
+import styles from "../..//css/CalendarPage.module.css";
 import "../../css/pulse-theme.css";
+
 import { eventColorMap } from "../../TestData/TestData";
 import { useCalendar } from "../../context/CalendarContext";
 
@@ -30,7 +33,7 @@ const CalendarPage = ({ events, onDelete, onSelectEvent, onEventDrop }) => {
   };
 
   return (
-    <div style={{ width: "100%", height: "100%", padding: "0" }}>
+    <div className={styles.calendarContainer}>
       {isReady && (
         <FullCalendar
           plugins={[

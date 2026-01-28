@@ -1,0 +1,161 @@
+/* App.module.css */
+.mainLayout {
+  height: 100vh !important;
+  width: 100vw !important;
+  overflow: hidden;
+}
+
+.horizontalLayout {
+  display: flex !important;
+  flex-direction: row !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden;
+}
+
+.sider {
+  background-color: #F4E6F1 !important;
+  flex: 0 0 80px !important;
+  max-width: 80px !important;
+}
+
+.siderWrapper {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #F4E6F1;
+}
+
+.transparentMenu {
+  background-color: transparent !important;
+  border: none !important;
+}
+
+.logoText {
+  font-weight: bold;
+  text-align: center;
+  padding: 0px !important;
+}
+
+/* 바디 영역 레이아웃 */
+.bodyLayout {
+  display: flex !important;
+  flex-direction: row !important;
+  flex: 1;
+  background-color: #fff5fb !important;
+  overflow: hidden;
+}
+
+.leftSection, .middleSection, .rightSection {
+  background-color: #fff5fb !important;
+  height: 100% !important;
+  transition: width 0.3s ease, border 0.3s ease;
+  position: relative;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.leftSection {
+  width: 20% !important;
+  border-right: 1px solid #ddd;
+}
+
+.middleWide { width: 80% !important; }
+.middleNarrow { width: 60% !important; }
+
+.rightOpen { width: 20% !important; border-left: 1px solid #ddd; }
+.rightClosed { width: 0 !important; overflow: hidden; border-left: none; }
+
+.contentPadding {
+  padding: 16px !important;
+  height: 100%;
+}
+
+.leftColumnWrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.whiteCard {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 16px;
+  overflow-y: auto;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+}
+
+.fullHeight {
+  height: 100% !important;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  border-radius: 8px; 
+  padding: 16px;
+}
+
+.rightSection .fullHeight {
+  padding: 0 !important;
+  overflow: hidden; 
+}
+
+.fullHeight > div {
+  height: 100% !important;
+}
+
+/* 차트 전용 카드 (높이 고정) */
+.chartCard {
+  flex: 1;
+  height: 25% !important;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.chartContainer {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+
+.sideToggleButton {
+  position: absolute;
+  top: 50%;
+  right: -10px;
+  transform: translateY(-50%);
+  background-color: #D1A7E1;
+  color: white;
+  padding: 4px 6px;
+  border-radius: 6px 0 0 6px;
+  cursor: pointer;
+  z-index: 1000;
+  font-size: 20px;
+}
+
+.chartTooltip {
+  padding: 6px 10px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #333;
+  z-index: 9999;
+  white-space: nowrap;
+  min-width: max-content;
+}
+
+.tooltipColorBox {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.tooltipValue {
+  font-weight: bold;
+}
