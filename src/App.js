@@ -410,7 +410,7 @@ const App = () => {
                   setIsDrawerOpen(false);
                   setSelectedEvent(null);
                 }}
-                open={isDrawerOpen || !!selectedEvent} // 이벤트 선택 시 자동으로 열림
+                open={isDrawerOpen || !!selectedEvent}
                 bodyStyle={{ padding: 0 }}
               >
                 <TodoForm
