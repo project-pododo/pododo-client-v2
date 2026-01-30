@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   Input,
   Button,
@@ -20,6 +20,8 @@ const FormPage = ({ initialData, onSubmit, onDelete }) => {
   const [form] = Form.useForm();
   const [isToggleOn, setIsToggleOn] = useState(false);
   const { selectedDate } = useCalendar();
+
+  const formRef = useRef(null);
 
   useEffect(() => {
     if (initialData) {
@@ -74,6 +76,28 @@ const FormPage = ({ initialData, onSubmit, onDelete }) => {
     }
   }, [form, initialData, isToggleOn, onSubmit, selectedDate]);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      const isClickInsideForm =
+        formRef.current && formRef.current.contains(event.target);
+      const isClickInsidePopup =
+        event.target.closest(".ant-picker-dropdown")  ||
+        event.target.closest(".ant-select-dropdown")  ||
+        event.target.closest(".ant-drawer")           ||
+        event.target.closest(".ant-dropdown")         ||
+        event.target.closest(".ant-select-item");
+
+      if (!isClickInsideForm && !isClickInsidePopup) {
+        handleProcessSave();
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [handleProcessSave]);
+
   const handleDelete = () => {
     if (initialData?.id && window.confirm("이 일정을 삭제할까요?")) {
       onDelete(initialData.id);
@@ -90,7 +114,7 @@ const FormPage = ({ initialData, onSubmit, onDelete }) => {
   );
 
   return (
-    <div className={styles.formContainer} onMouseLeave={handleProcessSave}>
+    <div className={styles.formContainer} ref={formRef}>
       <div className={styles.header}>
         <Dropdown overlay={menu} trigger={["click"]}>
           <Button

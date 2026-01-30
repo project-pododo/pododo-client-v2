@@ -6,7 +6,15 @@ import {
   useLocation,
   Link,
 } from "react-router-dom";
-import { Layout, Menu, List, Switch, Typography, ConfigProvider } from "antd";
+import {
+  Layout,
+  Menu,
+  List,
+  Switch,
+  Typography,
+  ConfigProvider,
+  Drawer,
+} from "antd";
 import {
   UserOutlined,
   UnorderedListOutlined,
@@ -47,6 +55,7 @@ const { Text } = Typography;
 const App = () => {
   const [events, setEvents] = useState(initialCalendarEvents);
   const [selectedKey, setSelectedKey] = useState("2");
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -69,6 +78,16 @@ const App = () => {
   };
 
   useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+      if (mobile) setIsSideVisible(false);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [setIsSideVisible]);
+
+  useEffect(() => {
     const pathMap = {
       "/": "2",
       "/user": "1",
@@ -79,6 +98,7 @@ const App = () => {
   }, [location.pathname]);
 
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const handleSaveEvent = (formData) => {
     if (!formData.title) return;
@@ -118,7 +138,12 @@ const App = () => {
       return;
     }
     const target = events.find((e) => e.id === String(eventData.id));
-    if (target) setSelectedEvent(target);
+    if (target) {
+      setSelectedEvent(target);
+      if (isMobile) {
+        setIsDrawerOpen(true);
+      }
+    }
   };
 
   const handleEventDrop = (info) => {
@@ -168,7 +193,7 @@ const App = () => {
         <Layout className={styles.horizontalLayout}>
           <Sider
             collapsed={true}
-            collapsedWidth={80}
+            collapsedWidth={isMobile ? 0 : 80}
             width={80}
             className={styles.sider}
           >
@@ -239,6 +264,7 @@ const App = () => {
 
           <Layout className={styles.bodyLayout}>
             {/* 왼쪽 섹션 */}
+            {!isMobile && (
             <Layout className={styles.leftSection}>
               <Content className={styles.contentPadding}>
                 <div className={styles.leftColumnWrapper}>
@@ -311,11 +337,10 @@ const App = () => {
                 </div>
               </Content>
             </Layout>
+            )}
 
             {/* 중앙 섹션 */}
-            <Layout
-              className={`${styles.middleSection} ${isSideVisible ? styles.middleNarrow : styles.middleWide}`}
-            >
+            <Layout className={`${styles.middleSection} ${isSideVisible && !isMobile ? styles.middleNarrow : styles.middleWide}`}>
               <Content className={styles.contentPadding}>
                 <div className={styles.fullHeight}>
                   <Routes>
@@ -355,6 +380,7 @@ const App = () => {
                   </Routes>
                 </div>
               </Content>
+              {!isMobile && (
               <div
                 className={styles.sideToggleButton}
                 onClick={() => {
@@ -371,9 +397,37 @@ const App = () => {
                   <VerticalRightOutlined />
                 )}
               </div>
+              )}
             </Layout>
 
             {/* 우측 섹션 */}
+            {isMobile ? (
+              <Drawer
+                title={selectedEvent ? "일정 수정" : "새 일정 등록"}
+                placement="bottom"
+                height="80%"
+                onClose={() => {
+                  setIsDrawerOpen(false);
+                  setSelectedEvent(null);
+                }}
+                open={isDrawerOpen || !!selectedEvent} // 이벤트 선택 시 자동으로 열림
+                bodyStyle={{ padding: 0 }}
+              >
+                <TodoForm
+                  key={selectedEvent?.id || "new-event"}
+                  initialData={selectedEvent}
+                  onSubmit={(data) => {
+                    handleSaveEvent(data);
+                    setIsDrawerOpen(false);
+                  }}
+                  onDelete={(id) => {
+                    handleDeleteEvent(id);
+                    setSelectedEvent(null);
+                    setIsDrawerOpen(false);
+                  }}
+                />
+              </Drawer>
+            ) : (
             <Layout
               className={`${styles.rightSection} ${isSideVisible ? styles.rightOpen : styles.rightClosed}`}
             >
@@ -391,6 +445,7 @@ const App = () => {
                 </div>
               </Content>
             </Layout>
+            )}
           </Layout>
         </Layout>
       </Layout>
