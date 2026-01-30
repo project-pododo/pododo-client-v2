@@ -81,9 +81,10 @@ const FormPage = ({ initialData, onSubmit, onDelete }) => {
       const isClickInsideForm =
         formRef.current && formRef.current.contains(event.target);
       const isClickInsidePopup =
-        event.target.closest(".ant-picker-dropdown") ||
-        event.target.closest(".ant-picker-dropdown") ||
-        event.target.closest(".ant-dropdown") ||
+        event.target.closest(".ant-picker-dropdown")  ||
+        event.target.closest(".ant-select-dropdown")  ||
+        event.target.closest(".ant-drawer")           ||
+        event.target.closest(".ant-dropdown")         ||
         event.target.closest(".ant-select-item");
 
       if (!isClickInsideForm && !isClickInsidePopup) {
