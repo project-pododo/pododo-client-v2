@@ -1,34 +1,30 @@
 import { useMemo } from "react";
 import dayjs from "dayjs";
+import isBetween from "dayjs/plugin/isBetween";
 import { statusColors } from "../TestData/TestData";
+
+dayjs.extend(isBetween);
 
 export const useCalendarData = (events) => {
   return useMemo(() => {
-    // const activeEvents = events.filter((event) => event.statusID !== "deleted");
-    const today = dayjs().format("YYYY-MM-DD");
+    const today = dayjs().startOf("day");
+    const activeEvents = events.filter((event) => event.statusID !== "deleted");
+    const dailyList = activeEvents.filter((event) => {
+      const startDate = dayjs(event.start).startOf("day");
+      const endDate = dayjs(event.end || event.start).endOf("day");
 
-    // const dailyList = activeEvents.filter((event) => {
-    //   const eventDate = dayjs(event.start).format("YYYY-MM-DD");
-    //   return eventDate === today;
-    // });
-    
-    // const statusCount = activeEvents.reduce((acc, event) => {
-    //   const statusKey = event.status || "미생성";
-    //   acc[statusKey] = (acc[statusKey] || 0) + 1;
-    //   return acc;
-    // });
+      return today.isBetween(startDate, endDate, "day", "[]");
+    });
 
-    const dailyList = events.filter((event) => event.date === today);
-
-    const statusCount = events.reduce((acc, event) => {
-      const statusKey = event.status || "미생성";
+    const statusCount = activeEvents.reduce((acc, event) => {
+      const statusKey = event.status || "미생성"; 
       acc[statusKey] = (acc[statusKey] || 0) + 1;
       return acc;
     }, {});
 
-
     const rawStatusData = Object.entries(statusCount).map(([key, value]) => ({
       id: key,
+      label: key,
       value,
       color: statusColors[key] || "#4ECDC4",
     }));
