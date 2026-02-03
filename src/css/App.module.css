@@ -94,6 +94,7 @@
   background-color: #ffffff;
   border-radius: 8px; 
   padding: 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .rightSection .fullHeight {
@@ -158,4 +159,19 @@
 
 .tooltipValue {
   font-weight: bold;
+}
+
+/* 모바일 */
+@media (max-width: 768px) {
+  .contentPadding {
+    padding: 12px 12px 30px 12px !important; 
+    overflow-y: auto !important;
+  }
+
+  .fullHeight {
+    height: auto !important;
+    min-height: calc(100vh - 120px); 
+    margin-bottom: 20px;
+    border-radius: 16px;
+  }
 }
