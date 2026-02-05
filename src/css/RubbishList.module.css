@@ -1,7 +1,7 @@
 /* RubbishList.module.css */
 .container {
   padding: 10px;
-  height: 100%;
+  min-height: 100%;
   display: flex;
   flex-direction: column;
 }
@@ -11,28 +11,19 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
 }
 
 .title {
   margin: 0 !important;
   color: #722ed1 !important;
+  flex-shrink: 0;
 }
 
 .searchInput {
   width: 250px !important;
   border-radius: 8px;
-}
-
-.searchIcon {
-  color: #bfbfbf;
-}
-
-.listWrapper {
-  flex: 1;
-}
-
-.emptyState {
-  margin-top: 100px;
+  flex-shrink: 1; 
 }
 
 .itemCard {
@@ -43,42 +34,101 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
   transition: all 0.3s;
 }
 
-.itemCard:hover {
-  background-color: #fafafa;
-  border-color: #d9d9d9;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+.itemInfo {
+  flex: 1;
+  min-width: 0;
 }
 
 .itemHeader {
   margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap; 
+  gap: 4px;
 }
 
 .itemTitle {
   font-size: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 70%; 
 }
 
 .dateTag {
-  margin-left: 8px;
+  margin-left: 4px;
   border-radius: 4px;
-}
-
-.itemDescription {
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .buttonGroup {
   display: flex;
   gap: 8px;
+  flex-shrink: 0; 
 }
 
-.actionButton {
-  border-radius: 6px;
+.listWrapper {
+  flex: 1;
+  overflow: visible; 
 }
 
 .paginationWrapper {
-  text-align: center;
-  margin-top: 16px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+/* 
+.paginationWrapper :global(.ant-pagination) {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+} */
+
+/* 모바일 */
+@media (max-width: 768px) {
+  .header {
+    justify-content: space-between;
+  }
+
+  .title {
+    font-size: 16px !important;
+  }
+
+  .searchInput {
+    width: 140px !important;
+    flex: 1;
+  }
+
+  .itemCard {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 12px;
+  }
+
+  .itemInfo {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .itemTitle {
+    max-width: 100%;
+  }
+
+  .buttonGroup {
+    width: 100%;
+    justify-content: flex-end; 
+    border-top: 1px dashed #f0f0f0;
+    padding-top: 8px;
+  }
+
+  .itemDescription {
+    display: block;
+    font-size: 12px;
+    margin-top: 4px;
+  }
 }

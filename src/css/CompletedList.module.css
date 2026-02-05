@@ -1,7 +1,7 @@
 /* CompletedList.module.css */
 .container {
   padding: 10px;
-  height: 100%;
+  min-height: 100%;
   display: flex;
   flex-direction: column;
 }
@@ -11,28 +11,18 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 10px;
 }
 
 .title {
   margin: 0 !important;
   color: #52c41a !important;
+  flex-shrink: 0;
 }
 
 .searchInput {
   width: 250px !important;
   border-radius: 8px;
-}
-
-.searchIcon {
-  color: #bfbfbf;
-}
-
-.listWrapper {
-  flex: 1;
-}
-
-.emptyState {
-  margin-top: 100px;
 }
 
 .itemCard {
@@ -43,43 +33,106 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
 }
 
 .itemInfo {
   display: flex;
   flex-direction: column;
+  flex: 1; 
+  min-width: 0; 
 }
 
 .itemHeader {
   margin-bottom: 4px;
   display: flex;
   align-items: center;
-}
-
-.checkbox {
-  margin-right: 10px;
+  flex-wrap: wrap;
+  gap: 4px;
 }
 
 .itemTitle {
   font-size: 16px;
   color: #555;
-}
-
-.dateTag {
-  margin-left: 8px;
-  border-radius: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .itemDescription {
   font-size: 13px;
-  margin-left: 28px;
+  margin-left: 32px;
+  display: block;
 }
 
-.rollbackButton {
-  border-radius: 6px;
+.listWrapper {
+  flex: 1;
+  overflow: visible; 
 }
 
 .paginationWrapper {
-  text-align: center;
-  margin-top: 16px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* .paginationWrapper :global(.ant-pagination) {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+} */
+
+/* 모바일 */
+@media (max-width: 768px) {
+  .header {
+    justify-content: flex-start;
+  }
+
+  .title {
+    font-size: 16px !important;
+  }
+
+  .searchInput {
+    width: 150px !important; 
+    flex: 1;
+  }
+
+  .itemCard {
+    flex-direction: column; 
+    align-items: flex-start; 
+    padding: 12px;
+  }
+
+  .itemInfo {
+    width: 100%; 
+  }
+
+  .itemHeader {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+
+  .itemTitle {
+    max-width: 150px;
+  }
+
+  .itemDescription {
+    margin-left: 0;
+    margin-top: 4px;
+    padding-left: 32px; 
+  }
+
+  .rollbackButton {
+    align-self: flex-end;
+    width: auto;
+    margin-top: 8px;
+    font-size: 12px;
+    height: 32px;
+  }
+
+  .dateTag {
+    margin-left: 0;
+    font-size: 11px;
+  }
 }

@@ -419,7 +419,7 @@ const App = () => {
                               />,
                             ]}
                           >
-                            <Text delete={item.statusID === "done"}>
+                            <Text delete={item.statusID === "done"} className={styles.dailyListItemText} title={item.title}>
                               {item.title}
                             </Text>
                           </List.Item>

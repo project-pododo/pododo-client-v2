@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   List,
   Input,
@@ -22,7 +22,14 @@ const { Text, Title } = Typography;
 const DoneList = ({ events, onToggleStatus }) => {
   const [searchText, setSearchText] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const pageSize = 8;
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const doneData = events.filter((e) => e.statusID === "done");
 
@@ -39,7 +46,7 @@ const DoneList = ({ events, onToggleStatus }) => {
     <div className={styles.container}>
       <div className={styles.header}>
         <Title level={4} className={styles.title}>
-          완료된 일정 <CheckCircleOutlined />
+          완료된 일정{!isMobile && <CheckCircleOutlined />}
         </Title>
         <Input
           placeholder="완료된 일정 검색..."
@@ -85,6 +92,7 @@ const DoneList = ({ events, onToggleStatus }) => {
                 </div>
 
                 <Button
+                  size={isMobile ? "small" : "middle"}
                   icon={<RollbackOutlined />}
                   onClick={() => onToggleStatus(item.id)}
                   className={styles.rollbackButton}
