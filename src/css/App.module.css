@@ -161,16 +161,39 @@
   font-weight: bold;
 }
 
+.dailyListItemText {
+  white-space: nowrap;
+  overflow: hidden;   
+  text-overflow: ellipsis;       
+  display: inline-block;
+}
+
+.whiteCard :global(.ant-list-item-action) {
+  margin-left: 0 !important; 
+  padding-left: 8px;
+}
+
 /* 모바일 */
 @media (max-width: 768px) {
+  .mainLayout, 
+  .horizontalLayout, 
+  .bodyLayout,
+  .middleSection {
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow: visible !important;
+  }
+
   .contentPadding {
     padding: 12px 12px 30px 12px !important; 
-    overflow-y: auto !important;
+    /* overflow-y: auto !important; */
+    height: auto !important;
+    overflow: visible !important;
   }
 
   .fullHeight {
     height: auto !important;
-    min-height: calc(100vh - 120px); 
+    min-height: calc(100vh - 160px); 
     margin-bottom: 20px;
     border-radius: 16px;
   }
